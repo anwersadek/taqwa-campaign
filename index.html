@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0d14">
+<title>Hind Grove Masjid — Taqwa Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ══════ TOKENS ══════ */
+:root{
+  --bg:#0a0d14;--surface:#111520;--card:#161c2e;--card2:#1a2136;
+  --border:#1e2840;--border2:#263050;
+  --text:#e8ecf4;--text2:#b0bcd4;--muted:#6b7a99;
+  --accent:#4f8ef7;--green:#22d3a0;--yellow:#f5c842;
+  --red:#f5424e;--purple:#9b6cf7;--orange:#f7834f;--cyan:#42d4f5;
+  --nav-h:68px;--header-h:60px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --header-bg:linear-gradient(135deg,#0c1422,#111a2e);
+  --header-border:#1e2840;
+  --nav-bg:linear-gradient(0deg,#0c1220,#111828);
+  --nav-border:#1e2840;
+  --logo-gradient:linear-gradient(135deg,#4f8ef7,#22d3a0);
+  --title-gradient:linear-gradient(90deg,#4f8ef7,#22d3a0);
+  --kpi-progress:linear-gradient(90deg,#4f8ef7,#22d3a0);
+}
+/* ── THEME: Emerald Field ── */
+[data-theme="emerald"]{
+  --bg:#0d1a12;--surface:#071209;--card:#112118;--card2:#162a1e;
+  --border:#1e3a28;--border2:#2a4a36;
+  --text:#d4f0dc;--text2:#8fc8a0;--muted:#4d7a5e;
+  --accent:#2dba6e;--green:#2dba6e;--yellow:#f5c842;
+  --red:#f5424e;--purple:#9b6cf7;--orange:#f7834f;--cyan:#42d4f5;
+  --header-bg:linear-gradient(135deg,#071209,#0d1a12);
+  --header-border:#1a3322;
+  --nav-bg:linear-gradient(0deg,#050e07,#071209);
+  --nav-border:#1a3322;
+  --logo-gradient:linear-gradient(135deg,#2dba6e,#83e6a8);
+  --title-gradient:linear-gradient(90deg,#2dba6e,#83e6a8);
+  --kpi-progress:linear-gradient(90deg,#2dba6e,#83e6a8);
+}
+/* ── THEME: Sunrise (light) ── */
+[data-theme="sunrise"]{
+  --bg:#fffaf3;--surface:#fff;--card:#fff;--card2:#fff7ed;
+  --border:#fde8c8;--border2:#fcd8a0;
+  --text:#3d2006;--text2:#7a4a18;--muted:#c47820;
+  --accent:#e8631c;--green:#16a34a;--yellow:#d97706;
+  --red:#dc2626;--purple:#7c3aed;--orange:#e8631c;--cyan:#0891b2;
+  --header-bg:linear-gradient(135deg,#fff,#fff7ed);
+  --header-border:#fde8c8;
+  --nav-bg:linear-gradient(0deg,#fff,#fff7ed);
+  --nav-border:#fde8c8;
+  --logo-gradient:linear-gradient(135deg,#f7834f,#f5c842);
+  --title-gradient:linear-gradient(90deg,#e8631c,#f5a623);
+  --kpi-progress:linear-gradient(90deg,#e8631c,#f5c842);
+}
+/* ── THEME: Royal Purple ── */
+[data-theme="purple"]{
+  --bg:#0e0816;--surface:#0a0614;--card:#1a1030;--card2:#221440;
+  --border:#2d1a50;--border2:#3d2468;
+  --text:#e8dcf8;--text2:#c0a8e8;--muted:#6b4a99;
+  --accent:#9b6cf7;--green:#22d3a0;--yellow:#f5c842;
+  --red:#f5424e;--purple:#9b6cf7;--orange:#f7834f;--cyan:#42d4f5;
+  --header-bg:linear-gradient(135deg,#0e0816,#1a1030);
+  --header-border:#2d1a50;
+  --nav-bg:linear-gradient(0deg,#080410,#0e0816);
+  --nav-border:#2d1a50;
+  --logo-gradient:linear-gradient(135deg,#9b6cf7,#e040fb);
+  --title-gradient:linear-gradient(90deg,#9b6cf7,#e040fb);
+  --kpi-progress:linear-gradient(90deg,#9b6cf7,#e040fb);
+}
+/* ══════ RESET ══════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+  display:flex;flex-direction:column;position:fixed;inset:0;overscroll-behavior:none;}
+
+/* ══════ HEADER ══════ */
+.app-header{
+  height:var(--header-h);
+  background:linear-gradient(135deg,#0c1422,#111a2e);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;flex-shrink:0;
+  padding-top:env(safe-area-inset-top,0px);
+  position:relative;z-index:100;
+}
+.app-logo{display:flex;align-items:center;gap:10px;}
+.app-logo-icon{width:34px;height:34px;background:var(--logo-gradient);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.app-logo-text h1{font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;background:var(--title-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.app-logo-text sub{font-size:9px;color:var(--muted);letter-spacing:.8px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.countdown-pill{background:rgba(245,196,66,.1);border:1px solid rgba(245,196,66,.25);border-radius:20px;padding:4px 10px;text-align:center;}
+.countdown-pill .cd-label{font-size:8px;color:var(--yellow);text-transform:uppercase;letter-spacing:.8px;}
+.countdown-pill .cd-val{font-family:'JetBrains Mono';font-size:12px;font-weight:700;color:var(--yellow);}
+.mode-btn{width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;}
+.mode-btn.admin{background:rgba(79,142,247,.15);border:1px solid rgba(79,142,247,.3);}
+.mode-btn.viewer{background:rgba(245,196,66,.12);border:1px solid rgba(245,196,66,.3);}
+
+/* ══════ READONLY BANNER ══════ */
+.readonly-bar{display:none;background:rgba(245,196,66,.08);border-bottom:1px solid rgba(245,196,66,.2);padding:6px 16px;font-size:11px;color:var(--yellow);text-align:center;flex-shrink:0;}
+body.readonly .readonly-bar{display:block;}
+body.readonly .edit-only{display:none!important;}
+/* Team mode: can edit but cannot access admin-only sections */
+body.team-mode .admin-only{display:none!important;}
+/* Admin mode: show nav items and buttons, but NOT screens (screens are controlled by navTo) */
+body.admin-mode .nav-item.edit-only{display:flex!important;}
+body.admin-mode .export-btn.edit-only{display:flex!important;}
+body.admin-mode .form-section.edit-only{display:block!important;}
+body.admin-mode .save-btn.edit-only{display:block!important;}
+body.admin-mode .admin-only.export-btn{display:flex!important;}
+body.team-mode .nav-item.edit-only{display:flex!important;}
+body.team-mode .form-section.edit-only{display:block!important;}
+body.team-mode .save-btn.edit-only{display:block!important;}
+.mode-btn.team{background:rgba(34,211,160,.12);border:1px solid rgba(34,211,160,.3);}
+
+/* ══════ SCROLL AREA ══════ */
+.app-body{flex:1;overflow:hidden;position:relative;}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px 14px calc(var(--nav-h) + var(--safe-bottom) + 10px);display:none;}
+.screen.active{display:block;}
+/* edit-only screens must NEVER show unless explicitly activated — override any body class rules */
+.screen.edit-only{display:none!important;}
+.screen.edit-only.active{display:block!important;}
+.screen::-webkit-scrollbar{display:none;}
+
+/* ══════ BOTTOM NAV ══════ */
+.bottom-nav{
+  height:calc(var(--nav-h) + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  background:var(--nav-bg);
+  border-top:1px solid var(--nav-border);
+  display:flex;align-items:flex-start;padding-top:6px;
+  flex-shrink:0;position:relative;z-index:100;
+}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 2px;border:none;background:transparent;color:var(--muted);transition:all .2s;position:relative;}
+.nav-item.active{color:var(--accent);}
+.nav-item.active .nav-icon{background:rgba(79,142,247,.15);border-radius:12px;}
+.nav-icon{width:40px;height:30px;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .2s;}
+.nav-label{font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;}
+.nav-badge{position:absolute;top:4px;right:calc(50% - 24px);background:var(--red);color:#fff;font-size:8px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+
+/* ══════ SECTION HEADER ══════ */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-family:'Bebas Neue';font-size:16px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;}
+.sec-sub{font-size:10px;color:var(--muted);}
+
+/* ══════ KPI CARDS ══════ */
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 12px;position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:2px 2px 0 0;}
+.kpi-card.blue::before{background:linear-gradient(90deg,#4f8ef7,#42d4f5);}
+.kpi-card.green::before{background:linear-gradient(90deg,#22d3a0,#4f8ef7);}
+.kpi-card.yellow::before{background:linear-gradient(90deg,#f5c842,#f7834f);}
+.kpi-card.red::before{background:linear-gradient(90deg,#f5424e,#9b6cf7);}
+.kpi-card.purple::before{background:linear-gradient(90deg,#9b6cf7,#4f8ef7);}
+.kpi-card.orange::before{background:linear-gradient(90deg,#f7834f,#f5c842);}
+.kpi-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;}
+.kpi-val{font-family:'JetBrains Mono';font-size:28px;font-weight:700;line-height:1;margin-bottom:2px;}
+.kpi-card.blue .kpi-val{color:#4f8ef7;}.kpi-card.green .kpi-val{color:#22d3a0;}
+.kpi-card.yellow .kpi-val{color:#f5c842;}.kpi-card.red .kpi-val{color:#f5424e;}
+.kpi-card.purple .kpi-val{color:#9b6cf7;}.kpi-card.orange .kpi-val{color:#f7834f;}
+.kpi-sub{font-size:9px;color:var(--muted);}
+.kpi-icon{position:absolute;right:10px;top:10px;font-size:18px;opacity:.18;}
+.mini-progress{height:4px;background:#1e2840;border-radius:2px;overflow:hidden;margin-top:6px;}
+.mini-progress-fill{height:100%;border-radius:2px;background:var(--kpi-progress);transition:width 1s;}
+
+/* ══════ CHART CARDS ══════ */
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+.chart-card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:2px;}
+.chart-card-sub{font-size:9px;color:#2e3850;margin-bottom:12px;}
+.legend-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);}
+.leg-dot{width:7px;height:7px;border-radius:50%;}
+
+/* WIN GAUGE */
+.gauge-wrap{position:relative;width:140px;height:140px;margin:0 auto;}
+.gauge-wrap canvas{width:140px!important;height:140px!important;}
+.gauge-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.gauge-center .gs{font-family:'JetBrains Mono';font-size:24px;font-weight:700;color:var(--green);}
+.gauge-center .gl{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+.gauge-legend{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.gl-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border-radius:7px;padding:6px 10px;font-size:11px;}
+.gl-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+
+/* POLLING DAY BANNER */
+.polling-banner{background:linear-gradient(135deg,#0d2210,#0a1a0d);border:2px solid var(--green);border-radius:14px;padding:14px;margin-bottom:12px;}
+.pb-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.live-dot{width:10px;height:10px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,211,160,.4);}50%{box-shadow:0 0 0 6px rgba(34,211,160,0);}}
+.polling-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.p-stat{background:rgba(0,0,0,.3);border-radius:9px;padding:10px;text-align:center;}
+.p-stat-val{font-family:'JetBrains Mono';font-size:26px;font-weight:700;}
+.p-stat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
+/* ══════ VOTER LIST ══════ */
+.search-bar{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+.search-input{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none;}
+.search-input:focus{border-color:var(--accent);}
+.filter-chips{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
+.filter-chips::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all .15s;white-space:nowrap;}
+.chip.active{background:rgba(79,142,247,.15);border-color:var(--accent);color:var(--accent);}
+.chip.green-chip.active{background:rgba(34,211,160,.12);border-color:var(--green);color:var(--green);}
+.chip.red-chip.active{background:rgba(245,66,78,.12);border-color:var(--red);color:var(--red);}
+.chip.yellow-chip.active{background:rgba(245,196,66,.1);border-color:var(--yellow);color:var(--yellow);}
+.chip.purple-chip.active{background:rgba(155,108,247,.12);border-color:var(--purple);color:var(--purple);}
+
+.voter-list{display:flex;flex-direction:column;gap:8px;}
+.voter-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .15s;active:scale(.98);}
+.voter-card:active{transform:scale(.98);background:var(--card2);}
+.voter-card.dup{opacity:.65;border-left:3px solid var(--purple);}
+.voter-card.inv{opacity:.55;border-left:3px solid var(--red);}
+.vc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.vc-name{font-weight:600;font-size:14px;line-height:1.2;flex:1;}
+.vc-id{font-family:'JetBrains Mono';font-size:9px;color:var(--muted);margin-top:1px;}
+.vc-badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
+.mini-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;}
+.mb-dup{background:#1a1630;color:#9b6cf7;border:1px solid #9b6cf7;}
+.mb-inv{background:#2e0d0d;color:#f5424e;border:1px solid #f5424e;}
+.mb-oa{background:#1e2228;color:#6b7a99;border:1px solid #555;}
+.mb-chk{background:#2e1e0d;color:#f7834f;border:1px solid #f7834f;}
+.vc-addr{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.3;}
+.vc-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.vc-pill{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;}
+.pill-yes{background:#0d2e22;color:#22d3a0;border:1px solid #22d3a0;}
+.pill-lean{background:#0d2028;color:#4f8ef7;border:1px solid #4f8ef7;}
+.pill-no{background:#2e0d0d;color:#f5424e;border:1px solid #f5424e;}
+.pill-unk{background:#1e2228;color:#6b7a99;border:1px solid #2e3850;}
+.pill-voted{background:#0d2e22;color:#22d3a0;border:1px solid #22d3a0;}
+.pill-remind{background:#2e1e0d;color:#f5c842;border:1px solid #f5c842;}
+.pill-not{background:#2e0d0d;color:#f5424e;border:1px solid #f5424e;}
+.vc-canvasser{font-size:10px;color:var(--accent);margin-top:4px;}
+.voter-count-bar{text-align:center;padding:10px;font-size:11px;color:var(--muted);}
+.load-more{display:block;width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-align:center;margin-top:8px;}
+
+/* ══════ VOTER DETAIL MODAL (full-screen on mobile) ══════ */
+.modal-screen{position:fixed;inset:0;background:var(--bg);z-index:500;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.modal-screen.open{transform:translateY(0);}
+.modal-header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;}
+.modal-back{width:36px;height:36px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text);flex-shrink:0;}
+.modal-body{padding:16px;}
+.modal-voter-name{font-size:20px;font-weight:700;margin-bottom:2px;}
+.modal-voter-meta{font-size:11px;color:var(--muted);font-family:'JetBrains Mono';}
+.form-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+.form-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;}
+.form-row{margin-bottom:12px;}
+.form-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.form-select,.form-input,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:15px;outline:none;-webkit-appearance:none;font-family:inherit;}
+.form-select:focus,.form-input:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-textarea{resize:none;min-height:80px;}
+/* big colored status selects */
+.status-select{font-weight:700;font-size:15px;border-radius:10px;}
+.status-select.s-Yes{background:#0d2e22;color:#22d3a0;border:2px solid #22d3a0;}
+.status-select.s-LeanPositive{background:#0d2028;color:#4f8ef7;border:2px solid #4f8ef7;}
+.status-select.s-No{background:#2e0d0d;color:#f5424e;border:2px solid #f5424e;}
+.status-select.s-Unknown{background:#1a2030;color:#6b7a99;border:2px solid #2e3850;}
+.status-select.t-Voted{background:#0d2e22;color:#22d3a0;border:2px solid #22d3a0;}
+.status-select.t-NotVoted{background:#2e0d0d;color:#f5424e;border:2px solid #f5424e;}
+.status-select.t-NeedReminder{background:#2e1e0d;color:#f5c842;border:2px solid #f5c842;}
+.status-select.t-Unknown{background:#1a2030;color:#6b7a99;border:2px solid #2e3850;}
+.status-select.v-Valid{background:#0d2e22;color:#22d3a0;border:2px solid #22d3a0;}
+.status-select.v-Duplicate{background:#1a1630;color:#9b6cf7;border:2px solid #9b6cf7;}
+.status-select.v-Invalid{background:#2e0d0d;color:#f5424e;border:2px solid #f5424e;}
+.status-select.v-NeedsCheck{background:#2e1e0d;color:#f7834f;border:2px solid #f7834f;}
+.status-select.v-OutOfArea{background:#1a2030;color:#6b7a99;border:2px solid #555;}
+.status-select option{background:#161c2e;color:#e8ecf4;}
+.save-btn{display:block;width:100%;padding:16px;background:var(--logo-gradient);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;letter-spacing:.5px;}
+.save-btn:active{opacity:.85;}
+
+/* ══════ STREETS SCREEN ══════ */
+.street-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.street-stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;active:scale(.97);}
+.street-stat-card:active{transform:scale(.97);}
+.ss-name{font-size:10px;color:var(--muted);font-family:'JetBrains Mono';margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ss-pct{font-family:'JetBrains Mono';font-size:22px;font-weight:700;color:var(--green);margin-bottom:4px;}
+.ss-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:4px;}
+.ss-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#22d3a0,#4f8ef7);transition:width .8s;}
+.ss-meta{font-size:9px;color:var(--muted);}
+.heatmap-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:6px;cursor:pointer;}
+.heatmap-row:active{background:var(--card2);}
+.hm-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.hm-name{font-size:12px;font-weight:600;flex:1;}
+.hm-count{font-family:'JetBrains Mono';font-size:10px;color:var(--muted);}
+.hm-pct-badge{font-family:'JetBrains Mono';font-size:11px;font-weight:700;color:var(--green);}
+.hm-bar{display:flex;height:18px;border-radius:5px;overflow:hidden;gap:1px;}
+.hm-seg{display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:rgba(0,0,0,.6);min-width:0;overflow:hidden;transition:width .8s;}
+
+/* ══════ ACTIVITY LOG ══════ */
+.log-form-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+.log-suggestion-box{position:relative;z-index:200;}
+.log-suggestions{position:absolute;top:0;left:0;right:0;background:var(--card2);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.5);}
+.log-sug-item{padding:12px 14px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);}
+.log-sug-item:active{background:rgba(79,142,247,.1);}
+.log-sug-item:last-child{border-bottom:none;}
+.outcome-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.outcome-chip{flex:1;min-width:80px;padding:10px 6px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
+.outcome-chip.sel-Contacted{background:#0d2e22;color:#22d3a0;border-color:#22d3a0;}
+.outcome-chip.sel-No.Answer{background:#1e2228;color:#6b7a99;border-color:#555;}
+.outcome-chip.sel-Refused{background:#2e0d0d;color:#f5424e;border-color:#f5424e;}
+.outcome-chip.sel-Callback{background:#2e1e0d;color:#f5c842;border-color:#f5c842;}
+.log-entry-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;}
+.le-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+.le-voter{font-weight:600;font-size:13px;}
+.le-time{font-family:'JetBrains Mono';font-size:9px;color:var(--muted);}
+.le-meta{font-size:11px;color:var(--muted);}
+.le-outcome{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:6px;}
+.oc-Contacted{background:#0d2e22;color:#22d3a0;}
+.oc-No.Answer{background:#1e2228;color:#6b7a99;}
+.oc-Refused{background:#2e0d0d;color:#f5424e;}
+.oc-Callback{background:#2e1e0d;color:#f5c842;}
+.del-btn{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:2px 6px;}
+
+/* ══════ LEADERBOARD ══════ */
+.lb-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.lb-rank{font-family:'Bebas Neue';font-size:24px;color:var(--muted);margin-right:10px;}
+.lb-name{font-weight:700;font-size:15px;flex:1;}
+.lb-total{font-family:'JetBrains Mono';font-size:22px;font-weight:700;color:var(--accent);}
+.lb-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:8px;}
+.lb-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#4f8ef7,#22d3a0);}
+
+/* ══════ REMINDERS ══════ */
+.reminder-section{margin-bottom:14px;}
+.reminder-section-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;margin-bottom:8px;cursor:pointer;}
+.rsh-urgent{background:rgba(245,66,78,.08);border:1px solid rgba(245,66,78,.2);}
+.rsh-warn{background:rgba(245,196,66,.06);border:1px solid rgba(245,196,66,.2);}
+.rsh-info{background:rgba(79,142,247,.06);border:1px solid rgba(79,142,247,.2);}
+.rsh-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+.rsh-count{font-family:'JetBrains Mono';font-size:18px;font-weight:700;}
+.reminder-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;}
+.reminder-item:active{background:var(--card2);}
+.ri-name{font-weight:600;font-size:13px;}
+.ri-street{font-size:10px;color:var(--muted);font-family:'JetBrains Mono';}
+.ri-reason{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* ══════ PRINT / EXPORT ══════ */
+.export-btn{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;width:100%;text-align:left;transition:all .15s;}
+.export-btn:active{background:var(--card2);}
+.export-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.export-text .et-title{font-weight:600;font-size:14px;margin-bottom:2px;}
+.export-text .et-sub{font-size:11px;color:var(--muted);}
+.print-street-sel{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none;margin-bottom:10px;}
+.print-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.print-street-hdr{background:rgba(79,142,247,.08);padding:10px 14px;font-family:'Bebas Neue';font-size:16px;letter-spacing:1.5px;color:var(--accent);border-bottom:1px solid var(--border);}
+.print-voter-row{padding:10px 14px;border-bottom:1px solid rgba(30,40,64,.4);display:flex;align-items:center;gap:10px;}
+.print-voter-row:last-child{border-bottom:none;}
+.pv-num{font-family:'JetBrains Mono';font-size:10px;color:var(--muted);width:20px;flex-shrink:0;}
+.pv-info{flex:1;}
+.pv-name{font-weight:600;font-size:13px;}
+.pv-addr{font-size:10px;color:var(--muted);}
+.pv-support{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;}
+
+/* ══════ BACKUP SCREEN ══════ */
+.backup-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;}
+.bi-ts{font-family:'JetBrains Mono';font-size:11px;color:var(--accent);margin-bottom:4px;}
+.bi-stats{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.bi-actions{display:flex;gap:6px;}
+.bi-type{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:6px;}
+.bi-auto{background:#0d2028;color:#4f8ef7;border:1px solid #4f8ef7;}
+.bi-manual{background:#0d2e22;color:#22d3a0;border:1px solid #22d3a0;}
+
+/* ══════ TOAST ══════ */
+.toast{position:fixed;bottom:calc(var(--nav-h) + var(--safe-bottom) + 12px);left:50%;transform:translateX(-50%) translateY(20px);background:#22d3a0;color:#0a0d14;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:700;opacity:0;transition:all .25s;pointer-events:none;z-index:999;white-space:nowrap;box-shadow:0 4px 20px rgba(34,211,160,.3);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ══════ PIN OVERLAY ══════ */
+.pin-overlay{position:fixed;inset:0;background:rgba(5,8,16,.95);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(10px);}
+.pin-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:30px 24px;width:min(340px,90vw);text-align:center;}
+.pin-title{font-family:'Bebas Neue';font-size:26px;letter-spacing:3px;background:linear-gradient(90deg,#4f8ef7,#22d3a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
+.pin-sub{font-size:12px;color:var(--muted);margin-bottom:22px;}
+.pin-mode-row{display:flex;gap:8px;margin-bottom:22px;}
+.pmb{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.pmb.active{border-color:var(--accent);color:var(--accent);background:rgba(79,142,247,.1);}
+.pin-dots{display:flex;justify-content:center;gap:14px;margin-bottom:22px;}
+.pd{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:all .15s;}
+.pd.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 10px rgba(79,142,247,.5);}
+.pd.err{background:var(--red);border-color:var(--red);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.pk{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;font-size:22px;font-weight:700;cursor:pointer;color:var(--text);font-family:'JetBrains Mono';transition:all .12s;}
+.pk:active{transform:scale(.93);background:rgba(79,142,247,.1);}
+.pk.del{font-size:16px;color:var(--red);}
+.pk.zero{grid-column:2;}
+.pk.cancel{color:var(--muted);font-size:14px;}
+/* ── ACCESS SCREEN BUTTONS ── */
+.access-btn{width:100%;display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:14px;border:1px solid;cursor:pointer;text-align:left;transition:all .18s;font-family:inherit;}
+.access-btn:active{transform:scale(.97);}
+.access-icon{font-size:24px;flex-shrink:0;width:32px;text-align:center;}
+.access-info{flex:1;font-size:13px;line-height:1.4;}
+.access-info strong{display:block;font-size:14px;font-weight:700;}
+.access-info span{font-size:11px;opacity:.7;}
+.access-arrow{font-size:20px;color:var(--muted);flex-shrink:0;}
+.access-clear{background:rgba(107,122,153,.08);border-color:var(--border);color:var(--text);}
+.access-clear:hover{background:rgba(107,122,153,.15);border-color:var(--muted);}
+.access-team{background:rgba(34,211,160,.06);border-color:rgba(34,211,160,.3);color:var(--text);}
+.access-team:hover{background:rgba(34,211,160,.12);border-color:var(--green);}
+.access-team strong{color:var(--green);}
+.access-admin{background:rgba(79,142,247,.06);border-color:rgba(79,142,247,.3);color:var(--text);}
+.access-admin:hover{background:rgba(79,142,247,.12);border-color:var(--accent);}
+.access-admin strong{color:var(--accent);}
+
+.pin-hint{font-size:10px;color:var(--muted);}
+
+/* ── THEME SWITCHER ── */
+.theme-card{border-radius:14px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .2s;position:relative;}
+.theme-card:active{transform:scale(.97);}
+.theme-card.active-theme{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+.tc-preview{height:90px;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.tc-header{height:24px;display:flex;align-items:center;padding:0 8px;gap:5px;flex-shrink:0;}
+.tc-dot{width:14px;height:14px;border-radius:4px;}
+.tc-title-bar{font-size:7px;font-weight:700;letter-spacing:1.5px;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.tc-body{flex:1;padding:5px 6px;display:flex;flex-direction:column;gap:4px;}
+.tc-kpi-row{display:flex;gap:4px;}
+.tc-kpi{flex:1;border-radius:5px;padding:4px 5px;border:1px solid;}
+.tc-kl{font-size:6px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:1px;opacity:.7;}
+.tc-kv{font-size:11px;font-weight:700;font-family:var(--font-mono);}
+.tc-bar{height:3px;border-radius:2px;margin-top:3px;}
+.tc-nav{height:22px;display:flex;align-items:center;border-top-width:1px;border-top-style:solid;}
+.tc-nav-dot{flex:1;display:flex;justify-content:center;font-size:10px;opacity:.5;}
+.tc-nav-dot.on{opacity:1;}
+.tc-footer{padding:8px 10px;display:flex;align-items:center;justify-content:space-between;}
+.tc-name{font-size:12px;font-weight:600;}
+.tc-check{width:18px;height:18px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s;}
+.active-theme .tc-check{color:#fff;}
+
+/* ══════ PRINT STYLES ══════ */
+@media print{
+  .app-header,.bottom-nav,.search-bar,.filter-chips,.mode-btn,.toast,.pin-overlay{display:none!important;}
+  .screen{display:block!important;position:static!important;overflow:visible!important;padding:0!important;}
+  body{overflow:visible!important;position:static!important;}
+  .print-card{page-break-inside:avoid;border:1px solid #ccc;}
+  .print-street-hdr{background:#e8f0ff!important;color:#1a3a8f!important;}
+}
+
+/* ══════ RESPONSIVE TABLET ══════ */
+@media(min-width:600px){
+  .kpi-row{grid-template-columns:repeat(3,1fr);}
+  .street-stat-grid{grid-template-columns:repeat(3,1fr);}
+  .polling-grid{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ APP HEADER ══════════ -->
+<div class="app-header">
+  <div class="app-logo">
+    <div class="app-logo-icon">🌴</div>
+    <div class="app-logo-text">
+      <h1>HG Masjid</h1>
+      <sub>Taqwa Team · Poplar &amp; Limehouse</sub>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="countdown-pill">
+      <div class="cd-label">Polling Day</div>
+      <div class="cd-val" id="countdown">—</div>
+    </div>
+    <button class="mode-btn admin" id="modeBadge" onclick="openPin()" title="Switch mode">🔐</button>
+  </div>
+</div>
+
+<div class="readonly-bar">👁 VIEW-ONLY MODE — read access only</div>
+
+<!-- ══════════ SCREENS ══════════ -->
+<div class="app-body">
+
+  <!-- HOME / DASHBOARD -->
+  <div class="screen active" id="screen-home">
+    <div id="polling-day-banner" style="display:none">
+      <div class="polling-banner">
+        <div class="pb-header">
+          <div class="live-dot"></div>
+          <span style="font-family:'Bebas Neue';font-size:17px;letter-spacing:2px;color:var(--green)">POLLING DAY LIVE</span>
+          <span style="font-size:10px;color:var(--muted);margin-left:auto">Polls close 10pm</span>
+        </div>
+        <div class="polling-grid">
+          <div class="p-stat"><div class="p-stat-val" id="pd-voted" style="color:var(--green)">0</div><div class="p-stat-label">✅ Voted</div></div>
+          <div class="p-stat"><div class="p-stat-val" id="pd-remind" style="color:var(--yellow)">0</div><div class="p-stat-label">🔔 Reminder</div></div>
+          <div class="p-stat"><div class="p-stat-val" id="pd-notvoted" style="color:var(--red)">0</div><div class="p-stat-label">❌ Not Yet</div></div>
+          <div class="p-stat"><div class="p-stat-val" id="pd-pct" style="color:var(--accent)">0%</div><div class="p-stat-label">📈 Turnout</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-header"><div class="sec-title">Campaign Overview</div><div class="sec-sub" id="last-updated"></div></div>
+
+    <div class="kpi-row">
+      <div class="kpi-card blue"><div class="kpi-icon">🎯</div><div class="kpi-label">Target to Win</div><div class="kpi-val">171</div><div class="kpi-sub">50% + 1 of valid voters</div></div>
+      <div class="kpi-card green"><div class="kpi-icon">📋</div><div class="kpi-label">Total Records</div><div class="kpi-val">341</div><div class="kpi-sub">incl. flagged</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">🗳</div><div class="kpi-label">Active Voters</div><div class="kpi-val" id="kpi-active">—</div><div class="kpi-sub">Yes + Lean+</div></div>
+      <div class="kpi-card yellow"><div class="kpi-icon">⚖️</div><div class="kpi-label">Weighted Score</div><div class="kpi-val" id="kpi-wss">—</div><div class="kpi-sub">Yes×1 + Lean×0.5</div></div>
+      <div class="kpi-card red"><div class="kpi-icon">📉</div><div class="kpi-label">Gap to Target</div><div class="kpi-val" id="kpi-gap">—</div><div class="kpi-sub">votes needed</div></div>
+      <div class="kpi-card orange"><div class="kpi-icon">🚀</div><div class="kpi-label">Progress</div><div class="kpi-val" id="kpi-prog">—</div><div class="kpi-sub">weighted / 171</div><div class="mini-progress"><div class="mini-progress-fill" id="kpi-prog-bar" style="width:0%"></div></div></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-card-title">Support Status</div>
+      <div class="chart-card-sub">Valid records only</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;">
+        <div style="position:relative;height:150px;"><canvas id="supportChart"></canvas></div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div class="gl-row"><span><span class="gl-dot" style="background:#22d3a0;display:inline-block;margin-right:6px;"></span>Yes</span><span id="leg-yes" style="font-family:'JetBrains Mono';font-weight:700;color:#22d3a0">—</span></div>
+          <div class="gl-row"><span><span class="gl-dot" style="background:#4f8ef7;display:inline-block;margin-right:6px;"></span>Lean+</span><span id="leg-lean" style="font-family:'JetBrains Mono';font-weight:700;color:#4f8ef7">—</span></div>
+          <div class="gl-row"><span><span class="gl-dot" style="background:#f5424e;display:inline-block;margin-right:6px;"></span>No</span><span id="leg-no" style="font-family:'JetBrains Mono';font-weight:700;color:#f5424e">—</span></div>
+          <div class="gl-row"><span><span class="gl-dot" style="background:#3a4560;display:inline-block;margin-right:6px;"></span>Unknown</span><span id="leg-unk" style="font-family:'JetBrains Mono';font-weight:700;color:#6b7a99">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-card-title">Win Progress</div>
+      <div class="chart-card-sub">Weighted score vs target 171</div>
+      <div class="gauge-wrap"><canvas id="winChart"></canvas>
+        <div class="gauge-center"><div class="gs" id="gauge-score">0</div><div class="gl">Score</div></div>
+      </div>
+      <div class="gauge-legend">
+        <div class="gl-row"><span><span class="gl-dot" style="background:#22d3a0;display:inline-block;margin-right:6px;"></span>Current</span><span id="gl-cur" style="font-family:'JetBrains Mono';font-weight:700;color:#22d3a0">—</span></div>
+        <div class="gl-row"><span><span class="gl-dot" style="background:#2a3550;display:inline-block;margin-right:6px;"></span>Remaining</span><span id="gl-rem" style="font-family:'JetBrains Mono';font-weight:700;color:#6b7a99">—</span></div>
+        <div class="gl-row"><span><span class="gl-dot" style="background:#f5c842;display:inline-block;margin-right:6px;"></span>Target</span><span style="font-family:'JetBrains Mono';font-weight:700;color:#f5c842">171</span></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-card-title">Voting Day Turnout</div>
+      <div class="chart-card-sub">29 March 2026</div>
+      <div style="position:relative;height:160px;"><canvas id="turnoutChart"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-card-title">Voter Validity</div>
+      <div class="chart-card-sub">All 341 records</div>
+      <div style="position:relative;height:150px;"><canvas id="validityChart"></canvas></div>
+      <div id="validityLegend" class="legend-row"></div>
+    </div>
+  </div>
+
+  <!-- VOTERS -->
+  <div class="screen" id="screen-voters">
+    <div class="search-bar">
+      <input class="search-input" type="search" placeholder="🔍 Search voter name or address…" id="searchInput" oninput="applyFilters()" autocomplete="off" autocorrect="off">
+    </div>
+    <div class="filter-chips" id="filterChips">
+      <span class="chip active" data-filter="all" onclick="setChip(this,'all')">All <span id="chip-all-cnt"></span></span>
+      <span class="chip green-chip" data-filter="Yes" onclick="setChip(this,'Yes')">✅ Yes</span>
+      <span class="chip" data-filter="Lean Positive" onclick="setChip(this,'Lean Positive')">🔵 Lean+</span>
+      <span class="chip red-chip" data-filter="No" onclick="setChip(this,'No')">❌ No</span>
+      <span class="chip" data-filter="Unknown" onclick="setChip(this,'Unknown')">⬜ Unknown</span>
+      <span class="chip purple-chip" data-filter="__dup" onclick="setChip(this,'__dup')">🟣 Duplicates</span>
+      <span class="chip yellow-chip" data-filter="__remind" onclick="setChip(this,'__remind')">🔔 Remind</span>
+    </div>
+    <div class="voter-count-bar" id="voter-count-bar">Loading…</div>
+    <div class="voter-list" id="voterList"></div>
+    <button class="load-more" id="loadMoreBtn" onclick="loadMore()" style="display:none">Load more voters ↓</button>
+  </div>
+
+  <!-- STREETS -->
+  <div class="screen" id="screen-streets">
+    <div class="sec-header"><div class="sec-title">Street Heatmap</div></div>
+    <div class="street-stat-grid" id="streetStatGrid"></div>
+    <div class="sec-header" style="margin-top:4px;"><div class="sec-title">All Streets</div><div class="sec-sub">Tap to filter voters</div></div>
+    <div id="streetHeatmap"></div>
+  </div>
+
+  <!-- LOG / LEADERBOARD -->
+  <div class="screen edit-only" id="screen-log">
+    <div class="sec-header"><div class="sec-title">Activity Log</div></div>
+
+    <!-- Log form — hidden by default, toggled by button -->
+    <button class="save-btn" id="log-form-toggle-btn"
+      onclick="toggleLogForm()"
+      style="background:linear-gradient(135deg,#22d3a0,#4f8ef7);margin-bottom:12px;">
+      + Log a New Contact
+    </button>
+
+    <div class="log-form-card" id="log-form-panel" style="display:none;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);">New Contact Entry</div>
+        <button onclick="toggleLogForm()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Voter</div>
+        <input class="form-input" id="log-voter" placeholder="Search voter name…" oninput="searchLogVoter(this.value)" autocomplete="off" autocorrect="off">
+        <div class="log-suggestion-box"><div id="log-suggestions" class="log-suggestions" style="display:none;"></div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Canvasser Name</div>
+        <input class="form-input" id="log-canvasser" placeholder="Your name">
+      </div>
+      <div class="form-row">
+        <div class="form-label">Outcome</div>
+        <div class="outcome-chips">
+          <div class="outcome-chip" data-outcome="Contacted" onclick="selectOutcome(this)">✅ Contacted</div>
+          <div class="outcome-chip" data-outcome="No Answer" onclick="selectOutcome(this)">🔕 No Answer</div>
+          <div class="outcome-chip" data-outcome="Refused" onclick="selectOutcome(this)">❌ Refused</div>
+          <div class="outcome-chip" data-outcome="Callback" onclick="selectOutcome(this)">🔔 Callback</div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="addLogEntry()" style="background:linear-gradient(135deg,#22d3a0,#4f8ef7);">✓ Save Entry</button>
+    </div>
+
+    <div class="sec-header"><div class="sec-title">🏆 Leaderboard</div></div>
+    <div id="leaderboard"></div>
+
+    <div class="sec-header" style="margin-top:4px;"><div class="sec-title">Recent Activity</div></div>
+    <div id="logEntries"></div>
+  </div>
+
+  <!-- REMINDERS -->
+  <div class="screen" id="screen-reminders">
+    <div class="sec-header"><div class="sec-title">Action Reminders</div></div>
+    <div class="reminder-section">
+      <div class="reminder-section-header rsh-urgent" onclick="toggleReminderSection('rem-high')">
+        <div><div class="rsh-title" style="color:var(--red)">🔴 High Priority</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Duplicates · Invalid addresses</div></div>
+        <div class="rsh-count" style="color:var(--red)" id="rc-high-cnt">0</div>
+      </div>
+      <div id="rem-high"></div>
+    </div>
+    <div class="reminder-section">
+      <div class="reminder-section-header rsh-warn" onclick="toggleReminderSection('rem-mid')">
+        <div><div class="rsh-title" style="color:var(--yellow)">🟡 Need Canvassing</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Not yet contacted</div></div>
+        <div class="rsh-count" style="color:var(--yellow)" id="rc-mid-cnt">0</div>
+      </div>
+      <div id="rem-mid" style="display:none"></div>
+    </div>
+    <div class="reminder-section">
+      <div class="reminder-section-header rsh-info" onclick="toggleReminderSection('rem-panel')">
+        <div><div class="rsh-title" style="color:var(--accent)">🔵 Our Panel</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Confirm turnout on voting day</div></div>
+        <div class="rsh-count" style="color:var(--accent)" id="rc-panel-cnt">0</div>
+      </div>
+      <div id="rem-panel" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- MORE (print / backup / export) -->
+  <div class="screen" id="screen-more">
+    <div class="sec-header"><div class="sec-title">Tools &amp; Export</div></div>
+
+    <button class="export-btn" onclick="exportCSV()">
+      <div class="export-icon" style="background:rgba(34,211,160,.1);">📊</div>
+      <div class="export-text"><div class="et-title">Export CSV</div><div class="et-sub">Download filtered voter list as spreadsheet</div></div>
+      <span style="color:var(--muted);font-size:18px;margin-left:auto;">›</span>
+    </button>
+
+    <button class="export-btn edit-only admin-only" onclick="navTo('backup')">
+      <div class="export-icon" style="background:rgba(79,142,247,.1);">💾</div>
+      <div class="export-text"><div class="et-title">Backups</div><div class="et-sub" id="backup-meta-sub">Auto-saved snapshots with restore</div></div>
+      <span style="color:var(--muted);font-size:18px;margin-left:auto;">›</span>
+    </button>
+
+    <div class="sec-header" style="margin-top:8px;"><div class="sec-title">🖨 Knock-up Sheet</div></div>
+    <select class="print-street-sel" id="print-street-sel" onchange="renderPrintSheet()"><option value="">All Streets</option></select>
+    <select class="print-street-sel" id="print-support-sel" onchange="renderPrintSheet()">
+      <option value="">All Support Levels</option>
+      <option>Yes</option><option>Lean Positive</option><option>Unknown</option>
+    </select>
+    <button class="export-btn" onclick="window.print()" style="background:rgba(155,108,247,.06);border-color:rgba(155,108,247,.2);">
+      <div class="export-icon" style="background:rgba(155,108,247,.1);">🖨</div>
+      <div class="export-text"><div class="et-title" style="color:var(--purple)">Print Knock-up Sheet</div><div class="et-sub">Sorted by street · valid records only</div></div>
+    </button>
+    <div id="printContent"></div>
+
+    <div class="sec-header" style="margin-top:16px;"><div class="sec-title">🎨 Theme</div></div>
+    <div id="theme-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;"></div>
+
+    <div class="sec-header" style="margin-top:16px;" id="sheets-section-header"><div class="sec-title">📡 Google Sheets Sync</div></div>
+    <div id="sheets-section" style="margin-bottom:8px;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;">
+        <div id="sheets-status-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--surface);margin-bottom:14px;font-size:12px;color:var(--muted);">
+          <div id="sheets-dot" style="width:10px;height:10px;border-radius:50%;background:var(--muted);flex-shrink:0;"></div>
+          <div id="sheets-status-txt">Not connected — paste your Web App URL below</div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div class="form-label" style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">Google Apps Script Web App URL</div>
+          <input class="form-input" id="mob-sheets-url" type="url" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;" oninput="mobSheetsUrlChanged()">
+        </div>
+        <div style="margin-bottom:12px;">
+          <div class="form-label" style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">Sheet Tab Name</div>
+          <input class="form-input" id="mob-sheets-tab" value="Voters" style="font-size:13px;">
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button class="save-btn" onclick="mobSaveSheetsCfg()" style="flex:1;padding:11px;font-size:13px;background:var(--accent);">💾 Save Config</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <button class="save-btn" id="mob-push-btn" onclick="mobPushToSheets()" style="padding:11px;font-size:13px;background:linear-gradient(135deg,#22d3a0,#4f8ef7);">⬆ Push</button>
+          <button class="save-btn" id="mob-pull-btn" onclick="mobPullFromSheets()" style="padding:11px;font-size:13px;background:var(--surface);color:var(--text);border:1px solid var(--border);">⬇ Pull</button>
+        </div>
+        <div id="mob-sync-log" style="margin-top:10px;background:var(--surface);border-radius:8px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);max-height:120px;overflow-y:auto;display:none;"></div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;">How it works</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.7;">
+          <div style="margin-bottom:4px;">⬆ <b style="color:var(--text)">Push</b> — sends all your voter data to the Google Sheet</div>
+          <div style="margin-bottom:4px;">⬇ <b style="color:var(--text)">Pull</b> — fetches latest data from the Sheet to your app</div>
+          <div>🔄 Auto-pull runs every 60 seconds once URL is saved</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BACKUP (sub-screen) -->
+  <div class="screen admin-only-screen" id="screen-backup">
+    <div class="sec-header">
+      <div>
+        <div class="sec-title">💾 Backups</div>
+        <div class="sec-sub" id="backup-count-lbl">0 snapshots</div>
+      </div>
+      <button class="save-btn" style="width:auto;padding:8px 16px;font-size:12px;" onclick="createBackup('manual')">+ Save Now</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <button class="export-btn" style="flex:1;padding:12px;" onclick="exportBackupFile()">
+        <div class="export-icon" style="width:32px;height:32px;font-size:16px;background:rgba(34,211,160,.1);">⬇</div>
+        <div class="export-text"><div class="et-title" style="font-size:12px;">Download</div></div>
+      </button>
+      <button class="export-btn" style="flex:1;padding:12px;" onclick="document.getElementById('importFile').click()">
+        <div class="export-icon" style="width:32px;height:32px;font-size:16px;background:rgba(79,142,247,.1);">⬆</div>
+        <div class="export-text"><div class="et-title" style="font-size:12px;">Import</div></div>
+      </button>
+    </div>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackupFromFile(this)">
+    <div id="backupList"></div>
+  </div>
+
+</div><!-- end app-body -->
+
+<!-- ══════════ BOTTOM NAV ══════════ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="navTo('home')">
+    <div class="nav-icon">📊</div><div class="nav-label">Dashboard</div>
+  </button>
+  <button class="nav-item" id="nav-voters" onclick="navTo('voters')">
+    <div class="nav-icon">🗳</div><div class="nav-label">Voters</div>
+  </button>
+  <button class="nav-item" id="nav-streets" onclick="navTo('streets')">
+    <div class="nav-icon">🗺</div><div class="nav-label">Streets</div>
+  </button>
+  <button class="nav-item edit-only" id="nav-log" onclick="navTo('log')">
+    <div class="nav-icon">📋</div><div class="nav-label">Activity</div>
+  </button>
+  <button class="nav-item" id="nav-reminders" onclick="navTo('reminders')">
+    <div class="nav-icon">🔔</div><div class="nav-label">Reminders</div><div class="nav-badge" id="nav-badge-rem" style="display:none">0</div>
+  </button>
+  <button class="nav-item" id="nav-more" onclick="navTo('more')">
+    <div class="nav-icon">⋯</div><div class="nav-label">More</div>
+  </button>
+</nav>
+
+<!-- ══════════ VOTER DETAIL MODAL ══════════ -->
+<div class="modal-screen" id="voterModal">
+  <div class="modal-header">
+    <div class="modal-back" onclick="closeVoterModal()">←</div>
+    <div style="flex:1;">
+      <div class="modal-voter-name" id="modal-name">—</div>
+      <div class="modal-voter-meta" id="modal-meta">—</div>
+    </div>
+    <div id="modal-id-badge" style="font-family:'JetBrains Mono';font-size:10px;color:var(--accent);background:rgba(79,142,247,.1);padding:3px 8px;border-radius:5px;"></div>
+  </div>
+  <div class="modal-body">
+    <div class="form-section">
+      <div class="form-section-title">Address</div>
+      <div id="modal-addr" style="font-size:13px;color:var(--text2);line-height:1.5;"></div>
+    </div>
+    <div class="form-section edit-only" id="modal-edit-section">
+      <div class="form-section-title">Update Status</div>
+      <div class="form-row">
+        <div class="form-label">Support Status</div>
+        <select class="form-select status-select" id="me-support" onchange="styleStatusSelect(this,'s')">
+          <option value="Yes">✅ Yes — Confirmed supporter</option>
+          <option value="Lean Positive">🔵 Lean Positive</option>
+          <option value="No">❌ No — Will not support</option>
+          <option value="Unknown">⬜ Unknown — Not yet canvassed</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Turnout Status</div>
+        <select class="form-select status-select" id="me-turnout" onchange="styleStatusSelect(this,'t')">
+          <option value="Voted">🟢 Voted</option>
+          <option value="Not Voted">🔴 Not Voted</option>
+          <option value="Need Reminder">🟡 Need Reminder</option>
+          <option value="Unknown">⬜ Unknown</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Validity</div>
+        <select class="form-select status-select" id="me-validity" onchange="styleStatusSelect(this,'v')">
+          <option value="Valid">✅ Valid</option>
+          <option value="Duplicate">🟣 Duplicate</option>
+          <option value="Invalid">❌ Invalid</option>
+          <option value="Needs Check">🟠 Needs Check</option>
+          <option value="Out of Area">⬜ Out of Area</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-label">Phone Number</div>
+        <input class="form-input" id="me-phone" type="tel" placeholder="+44 7xxx xxxxxx">
+      </div>
+      <div class="form-row">
+        <div class="form-label">Canvasser</div>
+        <input class="form-input" id="me-canvasser" placeholder="Who contacted this voter?">
+      </div>
+      <div class="form-row">
+        <div class="form-label">Date Contacted</div>
+        <input class="form-input" id="me-contacted" type="date">
+      </div>
+      <div class="form-row">
+        <div class="form-label">Notes</div>
+        <textarea class="form-textarea" id="me-notes" placeholder="Any notes…" rows="3"></textarea>
+      </div>
+      <button class="save-btn" onclick="saveModal()">💾 Save Changes</button>
+    </div>
+    <div class="form-section" id="modal-view-section" style="display:none">
+      <div class="form-section-title">Current Status</div>
+      <div id="modal-view-status"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-box" id="pinBox">
+    <!-- STATE 1: Choose role -->
+    <div id="pin-choose">
+      <div class="pin-title" style="font-size:17px;letter-spacing:1px;">Hind Grove Masjid</div>
+      <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">Taqwa Team Campaign System</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:22px;padding:0 4px;">Select your access level to continue</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="access-btn access-clear" onclick="enterClear()">
+          <span class="access-icon">👁</span>
+          <span class="access-info"><strong>View Only</strong><br><span>Browse campaign data · no edits</span></span>
+          <span class="access-arrow">›</span>
+        </button>
+        <button class="access-btn access-team" onclick="enterPin('team')">
+          <span class="access-icon">🌴</span>
+          <span class="access-info"><strong>Taqwa Team Member</strong><br><span>Log contacts · update voter status</span></span>
+          <span class="access-arrow">›</span>
+        </button>
+        <button class="access-btn access-admin" onclick="enterPin('admin')">
+          <span class="access-icon">🔐</span>
+          <span class="access-info"><strong>Taqwa Admin</strong><br><span>Full access · backups · settings</span></span>
+          <span class="access-arrow">›</span>
+        </button>
+      </div>
+    </div>
+    <!-- STATE 2: PIN entry -->
+    <div id="pin-entry" style="display:none;">
+      <button onclick="backToChoose()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:12px;padding:0;">← Back</button>
+      <div class="pin-title" style="font-size:17px;letter-spacing:1px;" id="pin-entry-title">Enter PIN</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:18px;" id="pin-entry-sub"></div>
+      <div class="pin-dots"><div class="pd" id="pd0"></div><div class="pd" id="pd1"></div><div class="pd" id="pd2"></div><div class="pd" id="pd3"></div></div>
+      <div class="pin-pad">
+        <div class="pk" onclick="pinKey('1')">1</div><div class="pk" onclick="pinKey('2')">2</div><div class="pk" onclick="pinKey('3')">3</div>
+        <div class="pk" onclick="pinKey('4')">4</div><div class="pk" onclick="pinKey('5')">5</div><div class="pk" onclick="pinKey('6')">6</div>
+        <div class="pk" onclick="pinKey('7')">7</div><div class="pk" onclick="pinKey('8')">8</div><div class="pk" onclick="pinKey('9')">9</div>
+        <div class="pk del" onclick="pinDel()">⌫</div><div class="pk zero" onclick="pinKey('0')">0</div><div class="pk cancel" onclick="backToChoose()">✕</div>
+      </div>
+      <div class="pin-hint" id="pin-hint" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════ DATA ═══════════
+const RAW=[[1,"Mohammed Tahmid Rashid","Pigott Street","94 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","Duplicate of 8","","",""],[2,"Sirajul Ali","Pigott Street","66 Pigott Street, London E14 7DN","Unknown","Unknown","Valid","","","",""],[3,"Nanu Miah","Pigott Street","31 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[4,"Abab Uddin","Pigott Street","33 Pigott Street, London E14 7DH","Unknown","Unknown","Valid","","","",""],[5,"Mohammad Abdus Sabur","Pigott Street","27 Pigott Street, London E14 7DH","Unknown","Unknown","Valid","","","",""],[6,"Abdul Rouf","Pigott Street","39 Pigott Street, London E14 7DH","Unknown","Unknown","Valid","","","",""],[7,"Abdul Azim","Pigott Street","39 Pigott Street, London E14 7DH","Unknown","Unknown","Valid","","","",""],[8,"Mohammed Tahmid Rashid","Pigott Street","44 Pigott Street, London E14 7DW","Unknown","Unknown","Duplicate","Duplicate of 1","","",""],[9,"Amir Omar","Pigott Street","112 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[10,"Abdel Rahim Maaroof","Pigott Street","110 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[11,"Sabir Muthlur Rahman","Pigott Street","102 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[12,"Tarik Maaroof","Pigott Street","110 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[13,"Ripon Miah ali","Pigott Street","142 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[14,"Jahed Ahmed","Pigott Street","122 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[15,"Sumon Uddin","Pigott Street","33 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[16,"Mohammed Saleh","Pigott Street","26 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[17,"Mossawir Ali","Pigott Street","39 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[18,"Mohammad Anwer Sadek","Pigott Street","43 Pigott Street, London E14 7DW","Yes","Unknown","Valid","Our Panel","","",""],[19,"Ferdous Miah","Pigott Street","74 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[20,"Azad Ahmed","Pigott Street","37 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[21,"Alif Uddin","Pigott Street","33 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[22,"Osman Mahmood Foysal","Pigott Street","36 Pigott Street, London E14 7DN","Yes","Unknown","Valid","Our Panel","","",""],[23,"Nazmus saqib","Pigott Street","38 Pigott Street, London E14 7DN","Unknown","Unknown","Valid","","","",""],[24,"Mohiudin Monzur","Pigott Street","38, Pigott street, London E14 7DN","Yes","Unknown","Valid","Our Panel","","",""],[25,"Abdul Mumeen","Pigott Street","37 Pigott Street, London E14 7DH","Unknown","Unknown","Valid","","","",""],[26,"Mohamed Prince Ahmed","Pigott Street","Flat 2, 43 Pigott Street, London E14 7DH","Unknown","Unknown","Valid","","","",""],[27,"Atiqur Rahman","Pigott Street","132, Pigott Street, London E14 7DW","Yes","Unknown","Valid","Our Panel","","",""],[28,"Miskath Al Rahman","Pigott Street","170 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[29,"Sajjadur Rahman","Pigott Street","4 Pigott Street, London E14 7DN","Unknown","Unknown","Valid","","","",""],[30,"Sajid Ahmod","Pigott Street","126 Pigott Street, London E14 7DW","Unknown","Unknown","Valid","","","",""],[31,"Sarfaraz Khan","Saracen Street","44 Saracen Street E14 6HW","Unknown","Unknown","Valid","","","",""],[32,"Md Salim Uddin","Saracen Street","11 Russell House Saracen St E14 6HJ","Unknown","Unknown","Valid","","","",""],[33,"Rahman Anisur","Saracen Street","20 Russell House Saracen St E14 6HJ","Unknown","Unknown","Valid","","","",""],[34,"Syed Easin Sumon","Saracen Street","Flat 30 Russell House Saracen St E14 6HJ","Unknown","Unknown","Valid","","","",""],[35,"Imran Hussain","Saracen Street","25 Russell House Saracen St E14 6HJ","Unknown","Unknown","Valid","","","",""],[36,"Jewel Miah","Saracen Street","12 Russell House Saracen St E14 6HJ","Unknown","Unknown","Valid","","","",""],[37,"Kamrul hasan Sujon","Saracen Street","13 Stanley House Saracen St E14 6EX","Unknown","Unknown","Valid","","","",""],[38,"Mr Reaz Ali","Saracen Street","13 Stanley House Saracen St E14 6EX","Unknown","Unknown","Valid","","","",""],[39,"Lokman Hakim","Saracen Street","Flat 13 Stanley House Saracen St E14 6EX","Unknown","Unknown","Valid","","","",""],[40,"Mohammed Baharul Islam","Saracen Street","15 Stanley House Saracen St E14 6EX","Unknown","Unknown","Valid","","","",""],[41,"Masuk Ahmed","Lindfield Street","7, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[42,"Aftab Ahmed","Lindfield Street","35, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[43,"Saidul haque","Lindfield Street","20, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[44,"Shahid Abdur Rahman","Lindfield Street","58 Anglesey House Lindfield street E14 6HS","Unknown","Unknown","Valid","","","",""],[45,"Md Yusuf Amir","Pelling Street","Flat missed, 3 Pelling Street, London, E14 7EN","Unknown","Unknown","Valid","","","",""],[46,"Abab Ahmod","Pigott Street","37 Pigott Street E14 7DW","Unknown","Unknown","Valid","","","",""],[47,"Mohibur Rahman","Pigott Street","136 Pigott Street E14 7DW","Unknown","Unknown","Valid","","","",""],[48,"Md Alis Miah (Muazzin)","Pigott Street","168 Pigott St E14 7DW","Unknown","Unknown","Valid","","","",""],[49,"Mohammed Harun Rashid","Pigott Street","94 Pigott Street E14 7DW","Unknown","Unknown","Valid","","","",""],[50,"Lutfur Rahman","Pigott Street","170 Pigott Street E14 7DW","Unknown","Unknown","Valid","","","",""],[51,"Rizwan Rashid","Pigott Street","94 Pigott Street E14 7DW","Unknown","Unknown","Valid","","","",""],[52,"Mahbub Rashid","Pigott Street","94 Pigott Street E14 7DW","Unknown","Unknown","Valid","","","",""],[53,"Muhsin Rashid","Pigott Street","94 Pigott Street E14 7DW","Unknown","Unknown","Valid","","","",""],[54,"Abul Hossain","Hind Grove","24 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[55,"Yeasin Arafat","Hind Grove","80 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[56,"Nadir Hajib","Kildare Walk","72 Kildare walk E14 7DS","Unknown","Unknown","Valid","","","",""],[57,"Abu Razek","Kildare Walk","9 Kildare walk E14 7DB","Unknown","Unknown","Valid","","","",""],[58,"Abdullah Muhammad","Kildare Walk","50 Kildare walk E14 7DB","Unknown","Unknown","Valid","","","",""],[59,"Iftikhar Ahmed","Kildare Walk","57 kildare Walk E14 7DB","Unknown","Unknown","Valid","","","",""],[60,"Sana Miah","Kildare Walk","35 Kildare walk E14 7DB","Unknown","Unknown","Valid","","","",""],[61,"Raja Muhammad Arshad","Kildare Walk","50 Kildare walk E14 7DB","Unknown","Unknown","Valid","","","",""],[62,"Tanvir Ahmad","Kildare Walk","57 kildare Walk E14 7DB","Unknown","Unknown","Valid","","","",""],[63,"Muhammad Abdullah","Kildare Walk","50 Kildare walk E14 7DB","Unknown","Unknown","Valid","","","",""],[64,"Ruhul Amin","Kildare Walk","35 Kildare Walk E14 7DB","Unknown","Unknown","Valid","","","",""],[65,"Moyna Ali","Kildare Walk","3 Kildare Walk E14 7DB","Unknown","Unknown","Valid","","","",""],[66,"Abadur Rahman","Kildare Walk","66 Kildare walk E14 7DS","Yes","Unknown","Valid","Our Panel","","",""],[67,"Mirza Jamal Begg","Kildare Walk","25 Kildare walk E14 7DB","Unknown","Unknown","Valid","","","",""],[68,"Mirza Jabir Begg","Kildare Walk","25 Kildare walk E14 7DB","Unknown","Unknown","Valid","","","",""],[69,"Muhammad Abdul Aziz","Kildare Walk","49 Kildare walk e14 7DB","Unknown","Unknown","Valid","","","",""],[70,"Jermaine Robinson","Kildare Walk","59 Kildare Walk E14 7DB","Unknown","Unknown","Valid","","","",""],[71,"Shonuj Ali","Lindfield Street","Flat 52, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[72,"Md Kamruzzaman","Lindfield Street","Flat 46, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[73,"Abul Sayem","Lindfield Street","Flat 31, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[74,"Ehsan Haque","Lindfield Street","Flat 20, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[75,"Md Mahadi Hussain","Lindfield Street","Flat 34, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[76,"Md Adar Miah","Lindfield Street","Flat 18, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[77,"Mohammed Suhrab Hassan","Lindfield Street","Flat 37, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[78,"Mohammed Mosharof Ali","Lindfield Street","Flat 37, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[79,"Jahid Ahmed","Lindfield Street","Flat 21, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[80,"Mohammed Thanbir Rahman","Lindfield Street","Flat 22, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[81,"Mohammed Alaur Rahman","Lindfield Street","Flat 22, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[82,"Md Abul Hussain","Lindfield Street","Flat 34, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[83,"Azad Miah","Lindfield Street","Flat 16, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[84,"Eyakub Ali","Lindfield Street","Flat 14, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[85,"Shoaib Akbar","Lindfield Street","Flat 14, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[86,"Ibrahim Masud","Lindfield Street","Flat 15, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[87,"69Mohammad Ekramul Hoque","Lindfield Street","Flat 15, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[88,"Mohammad Samiul Hoque","Lindfield Street","Flat 15, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[89,"Tanbeer Ahmed","Lindfield Street","Flat 7, Anglesey House, Lindfield Street, London, E14 6HS","Unknown","Unknown","Valid","","","",""],[90,"Foysol Ahmed","Gough Walk","104 Gough Walk E14 6HR","Unknown","Unknown","Valid","","","",""],[91,"Khoyruzzaman Rabbi","Gough Walk","22 Gough Walk E14 6HN","Unknown","Unknown","Valid","","","",""],[92,"Babor Ahmed Matin","Gough Walk","22 Gough Walk E14 6HN","Unknown","Unknown","Valid","","","",""],[93,"Falzur Rahman","Gough Walk","95 Gough walk E14 6HR","Unknown","Unknown","Valid","","","",""],[94,"Md Shafiqul Islam","Gough Walk","46 Gough Walk E14 6HN","Unknown","Unknown","Valid","","","",""],[95,"Muhammad Asaduzzaman Khan","Gough Walk","20 Gough Walk E14 6HN","Unknown","Unknown","Valid","","","",""],[96,"Eahsanul Haque","Gough Walk","83 Gough walk E14 6HR","Unknown","Unknown","Valid","","","",""],[97,"Mr. Mühibur Rahman","Gough Walk","34 Gough walk E14 6HN","Unknown","Unknown","Valid","","","",""],[98,"Ghulam Hazrat","Gough Walk","9 Gough Walk E14 6HN","Unknown","Unknown","Valid","","","",""],[99,"Mohammad Yeasin Arafat","Hind Grove","80 Hind Grove London E14 6HU","Unknown","Unknown","Valid","","","",""],[100,"Sumon Ahmed","Hind Grove","80 Hind Grove London E14 6HU","Unknown","Unknown","Valid","","","",""],[101,"Manzur Ali","Hind Grove","21 Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[102,"Shahed Mia Muzumder","Hind Grove","37 Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[103,"Mohammed Imthlazul Haque","Hind Grove","6 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[104,"Ridwan All","Hind Grove","102 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[105,"Jabedur Rahman","Hind Grove","14 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[106,"Rukon Minh","Hind Grove","Flat 8, William Booth House 1a, Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[107,"Shofi Sami Suhel","Hind Grove","Flat 1, William Booth House 1a, Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[108,"Tofuzzul Miah","Hind Grove","146 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[109,"Rejwan Ahmed Raju","Hind Grove","212A Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[110,"Faysal Ahmed","Hind Grove","94 Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[111,"Mumen Miah Mozumder","Hind Grove","37 Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[112,"Asraf Miah","Hind Grove","52 Hind Grove London E14 6HU","Unknown","Unknown","Valid","","","",""],[113,"Sahan Uddin","Hind Grove","Flat 6 William Booth House 1A Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[114,"Din Islam Omar","Hind Grove","24 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[115,"Din Mohammad Rabbl","Hind Grove","24 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[116,"Alam Ariful","Hind Grove","144 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[117,"Sazzad Hossain Mojumder","Hind Grove","156 Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[118,"Mozammel hoque","Hind Grove","192 Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[119,"Mohammad Shahidullah","Hind Grove","192 Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[120,"Mohammed Omar Faruq","Hind Grove","188 Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[121,"Md Masud Forkan","Hind Grove","188 Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[122,"Md Khalilur Rahman Khan","Hind Grove","190 Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[123,"Iqbal Hossain","Hind Grove","186 Hind grove E14 6HP","Unknown","Unknown","Needs Check","Address not found","","",""],[124,"Zasim Uddin","Hind Grove","212 Hind Grove, London, E14 6HP","Unknown","Unknown","Valid","","","",""],[125,"Mohammed Muhidul Islam","Hind Grove","72 Hind Grove, London, E14 6HU","Yes","Unknown","Valid","Our Panel","","",""],[126,"Abidul Islam","Hind Grove","72 Hind Grove, London, E14 6HU","Unknown","Unknown","Valid","","","",""],[127,"Mohamed Minhazul islam","Hind Grove","47 Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[128,"Mohammed Rahman","Hind Grove","47 Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[129,"Mohamed Hafiz","Hind Grove","47 Hind Grove, London, E14 6HT","Unknown","Unknown","Valid","","","",""],[130,"Sohidul Islam","Dod Street","Flat 10 Menteath House Dod Street E14 7DZ","Unknown","Unknown","Valid","","","",""],[131,"Sodrul Khan","Dod Street","17 Donne House Dod Street E14 7EF","Unknown","Unknown","Valid","","","",""],[132,"Md Mahbubul Alam Razib","Dod Street","Flat 28 Donne House Dod street E14 7EF","Unknown","Unknown","Valid","","","",""],[133,"Hafiz Luthfur Rahman","Dod Street","7 Donne House Dod Street E14 7EF","Unknown","Unknown","Valid","","","",""],[134,"Mr Masud","Dod Street","7 Plessey Building 25 Dod Street London E14 7ET","Unknown","Unknown","Valid","","","",""],[135,"Mohammad Ahmed","Dod Street","8 Menteath House Dod st E14 7DZ","Unknown","Unknown","Valid","","","",""],[136,"Shahidul Islam","Dod Street","7 Menteath House Dod street E14 7DZ","Unknown","Unknown","Valid","","","",""],[137,"Mohammed Jitu Miah","Dod Street","7 Menteath House Dod street E14 7DZ","Unknown","Unknown","Valid","","","",""],[138,"Md Akil Ahmad","Dod Street","14 Menteath House Dod St E14 7DZ","Unknown","Unknown","Valid","","","",""],[139,"Mohammed Jameel Al Hassan","Dod Street","7 Menteath House Dod street E14 7DZ","Unknown","Unknown","Valid","","","",""],[140,"Mohammed Jaabir Al Hassan","Dod Street","7 Menteath House Dod street E14 7DZ","Unknown","Unknown","Valid","","","",""],[141,"Mohammed Abdu Samad","Dod Street","29 Dod St E14 7ET","Unknown","Unknown","Valid","","","",""],[142,"Emdadul Hoque Miah","Dod Street","25 Dod St E14 7ET","Unknown","Unknown","Valid","","","",""],[143,"Mohammed Alim Uddin","Dod Street","23 Dod St E14 7ET","Unknown","Unknown","Valid","","","",""],[144,"Mr Azizur Rahman","Dod Street","18 Charlesworth House Dod St E14 7EE","Unknown","Unknown","Valid","","","",""],[145,"Shahriyar Ahmed","Dod Street","11 Gurdon House Dod St E14 7EB","Unknown","Unknown","Valid","","","",""],[146,"Jubar Ahmed","Dod Street","Flat 11 Gurdon House Dod St E14 7EB","Unknown","Unknown","Valid","","","",""],[147,"Gulzar Ahmed","Dod Street","11 Minchin House Dod St E14 7DW","Unknown","Unknown","Valid","","","",""],[148,"Quasar Ahmed Bablu","Dod Street","11 Minchin House Dod St E14 7DW","Unknown","Unknown","Valid","","","",""],[149,"Redhwan Ahmed","Dod Street","11 Minchin House Dod St E14 7DW","Unknown","Unknown","Valid","","","",""],[150,"Aminul Islam","Dod Street","14 Minchin House Dod St E14 7DW","Unknown","Unknown","Valid","","","",""],[151,"Md Sharif Khan","Dod Street","Flat 2 King court 3 Dod Street E14","Unknown","Unknown","Valid","","","",""],[152,"Md Ali Akbar Khan","Dod Street","Flat 2 King Court 3 Dod Street E14 7UY","Unknown","Unknown","Valid","","","",""],[153,"Kazi Ishaaq","Dod Street","Flat 1 Plessey Building 25 Dod Street London E14 7ET","Unknown","Unknown","Valid","","","",""],[154,"Kazi Layek","Dod Street","Flat 1 Plessey Building 25 Dod Street London E14 7ET","Unknown","Unknown","Valid","","","",""],[155,"Ahsah Sadik","Dod Street","9 Donne House Dod St E14 7EF","Unknown","Unknown","Valid","","","",""],[156,"Anwarul Haque","Dod Street","8 Gurdon House Dod St E14 7EB","Unknown","Unknown","Valid","","","",""],[157,"Elias Miah","Dod Street","5 Minchin House Dod St E14 7DY","Unknown","Unknown","Valid","","","",""],[158,"Monaf Miah","Dod Street","10 Minchin House Dod St E14 7DW","Unknown","Unknown","Valid","","","",""],[159,"Shahidul Islam","Dod Street","1 Menteath House Dod Street E14 7DZ","Unknown","Unknown","Valid","","","",""],[160,"Moksu Miah","Dod Street","14 Menteath House Dod St E14 7DZ","Unknown","Unknown","Valid","","","",""],[161,"Moynul Islam","East India Dock Road","Flat 3, Overstone House, East India Dock Road, London, E14 6HF","Unknown","Unknown","Valid","","","",""],[162,"Yasin Kuddus","East India Dock Road","Flat 17, Overstone House, East India Dock Road, London, E14 6HF","Unknown","Unknown","Valid","","","",""],[163,"Zeyna Wehabela","East India Dock Road","Flat 14, Overstone House, East India Dock Road, London, E14 6HF","Unknown","Unknown","Valid","","","",""],[164,"Md Abdul Kayum","East India Dock Road","Flat 3, Gladstone House, East India Dock Road, London E14 6HH","Unknown","Unknown","Valid","","","",""],[165,"Ejaj ahmed","East India Dock Road","Flat 14, Gladstone House, East India Dock Road, London E14 6HH","Yes","Unknown","Valid","Our Panel","","",""],[166,"Hamza Jolil","East India Dock Road","Flat 30 Arborfield House, East India Dock Road London, E14 6JQ","Unknown","Unknown","Valid","","","",""],[167,"Wahid Rahman","Canton Street","23 Canton Street E14 6JG","Unknown","Unknown","Valid","","","",""],[168,"Abdul Rob","Canton Street","10 House Canton street E14 6JW","Unknown","Unknown","Valid","","","",""],[169,"Mohammed Juhel Ahmed","Canton Street","14 Baring House Canton street E14 6JW","Unknown","Unknown","Valid","","","",""],[170,"Shah Alam","Canton Street","17 Baring House Canton St 7JW","Unknown","Unknown","Valid","","","",""],[171,"Arif Yasin Khan","Canton Street","36 canton street E14 6ES","Unknown","Unknown","Valid","","","",""],[172,"Abul Siddique","Canton Street","10 Canton St E14 6ES","Unknown","Unknown","Valid","","","",""],[173,"Mirza Mohammed Iqbal Hussain","Canton Street","48 canton St E14 6ES","Unknown","Unknown","Valid","","","",""],[174,"Mirza Yusuf Hussain","Canton Street","48 canton St E14 6ES","Unknown","Unknown","Valid","","","",""],[175,"Mohammed Saifur Raham","Canton Street","7 Baring House Canton street E14 6JW","Unknown","Unknown","Valid","","","",""],[176,"Niyaz Ahmed","Canton Street","32 Canton Street E14 6ES","Unknown","Unknown","Valid","","","",""],[177,"MD Aminul Islam","Canton Street","34 Canton Street E14 6ES","Unknown","Unknown","Valid","","","",""],[178,"Riyad Uddin","Canton Street","68 canton St E14 6ES","Unknown","Unknown","Valid","","","",""],[179,"Md Layek Miah","Canton Street","Flat 3 11 Canton St E14 6JG","Unknown","Unknown","Valid","","","",""],[180,"Rahim Uddin","Canton Street","68 Canton Street E14 6EP","Unknown","Unknown","Valid","","","",""],[181,"Nijam Uddin","Canton Street","60 Canton Street E14 6EP","Unknown","Unknown","Valid","","","",""],[182,"Mohammed Kona All","Canton Street","7 Baring House Canton street E14 6JW","Unknown","Unknown","Valid","","","",""],[183,"Shafique Miah","Canton Street","Flat 5 Baring House Canton street E14 6JW","Unknown","Unknown","Valid","","","",""],[184,"Fahan Hussain","Canton Street","Flat 5 Baring House Canton street E14 6JW","Unknown","Unknown","Valid","Duplicate of 188","","",""],[185,"Athor All","Canton Street","9 Baring House Canton St E14 6JW","Unknown","Unknown","Valid","","","",""],[186,"Iqbal Ali","Canton Street","9 Baring House Canton St E14 6JW","Unknown","Unknown","Valid","","","",""],[187,"Arman Rob","Canton Street","10 Baring House Canton St E14 6JW","Unknown","Unknown","Valid","","","",""],[188,"Fahian Hussain","Canton Street","Flat 5 Baring House Canton street E14 6JW","Unknown","Unknown","Duplicate","Duplicate of 184","","",""],[189,"Mohammed Shamsud Duha","Canton Street","Luke House 7-9 Canton Street E14 6JG","Unknown","Unknown","Valid","","","",""],[190,"Amirul Fakir","Canton Street","54 Canton Street E14 6ES","Unknown","Unknown","Valid","Duplicate of 202","","",""],[191,"Shakil Miah","Canton Street","6 Canton St E14 6ES","Unknown","Unknown","Valid","","","",""],[192,"Abdul Kaiyum","Canton Street","52 Canton St London E14 6ES","Unknown","Unknown","Valid","","","",""],[193,"Roid Ali","Canton Street","Luke House 7-9 Canton St E14 6JG","Unknown","Unknown","Needs Check","need to check person","","",""],[194,"Mozammil Ali","Canton Street","17 Canton Street E14 6JG","Unknown","Unknown","Valid","","","",""],[195,"Muhammad Abdul Hannan","Canton Street","16 Baring House Canton St E14 6JW","Unknown","Unknown","Valid","","","",""],[196,"Musaddique Ahmed","Canton Street","Flat 7 Hopkins House Canton St E14 6HL","Unknown","Unknown","Valid","","","",""],[197,"Shahidur Rahman","Canton Street","8 Hopkins House Canton St E14 6HL","Unknown","Unknown","Valid","","","",""],[198,"Jamal Uddin","Canton Street","4 Hopkins House Canton St E14 6HL","Unknown","Unknown","Valid","","","",""],[199,"Palash Munshi","Canton Street","26 Canton St E14 6ES","Unknown","Unknown","Valid","","","",""],[200,"Saleh uddin","Canton Street","15 Baring House Canton St E14 6JG","Unknown","Unknown","Valid","","","",""],[201,"Mohammed Farhad Hussain","Canton Street","31 canton Street E14 6JG","Unknown","Unknown","Valid","","","",""],[202,"Amirul Fakir","Canton Street","54 Canton Street E14 6ES","Unknown","Unknown","Duplicate","Duplicate of 190","","",""],[203,"Kalimuz Zaman","Canton Street","62 canton St E14 6EP","Unknown","Unknown","Valid","","","",""],[204,"Kamrul Islam","Canton Street","74 Canton St E14 7DH","Unknown","Unknown","Valid","","","",""],[205,"M Kuddus","East India Dock Road","Flat 17, Overstone House, East India Dock Road, London, E14 6HF","Unknown","Unknown","Valid","","","",""],[206,"Shah Alam","East India Dock Road","Flat 7, Gladstone House, East India Dock Road, London E14 6HH","Unknown","Unknown","Valid","","","",""],[207,"Zeyna Wehabela","East India Dock Road","Flat 14, Overstone House, East India Dock Road, London, E14 6HF","Unknown","Unknown","Valid","post code fixed","","",""],[208,"Syed Hyder","East India Dock Road","Flat 8, Overstone House, East India Dock Road, London, E14 6HF","Unknown","Unknown","Valid","post code fixed","","",""],[209,"Md Rumal Ahmed","East India Dock Road","Flat 17, Granville House, East India Dock Road, London, E14 6HQ","Unknown","Unknown","Valid","","","",""],[210,"H Akhtar","East India Dock Road","Flat 18, Granville House, East India Dock Road, London, E14 6HQ","Unknown","Unknown","Valid","","","",""],[211,"Atiqul Haque","East India Dock Road","Flat 23, Granville House, East India Dock Road, London, E14 6HQ","Unknown","Unknown","Valid","post code fixed","","",""],[212,"Mohamad Ahmed","Edward Mills Way","15 Edward Mills Way E14 6FN","Unknown","Unknown","Valid","","","",""],[213,"Moyez Uddin","Edward Mills Way","19 Edward Mills way E14 6FN","Unknown","Unknown","Valid","","","",""],[214,"Md Numan Ahmed","Edward Mills Way","7 Edward Mills way E14 6FN","Unknown","Unknown","Valid","","","",""],[215,"Mohammad Abdul Ahad","Edward Mills Way","9 Edward Mills way E14 6FN","Unknown","Unknown","Valid","","","",""],[216,"Mohammed Abdul Hasan","Edward Mills Way","9 Edward Mills way E14 6FN","Unknown","Unknown","Valid","","","",""],[217,"Mohammad Islam","Epstein Square","Flat 306, Felix Point, 5 Epstein Square, London, E14 6FX","Unknown","Unknown","Valid","","","",""],[218,"Md Khurshed Alam","Epstein Square","Flat 306, Felix Point, 5 Epstein Square, London, E14 6FX","Unknown","Unknown","Valid","","","",""],[219,"Syed Selim Ahmed","Farrance Street","31 Farrance Street E14 7DU","Unknown","Unknown","Valid","","","",""],[220,"Syed Mahin Ahmed","Farrance Street","31 Farrance Street E14 7DU","Unknown","Unknown","Valid","","","",""],[221,"Syed Chand Ali","Farrance Street","31 Farrance Street E14 7DU","Unknown","Unknown","Valid","","","",""],[222,"Mashud Miah","Farrance Street","27 Farrance St E14 7DU","Unknown","Unknown","Valid","","","",""],[223,"Arafath Hussain","Farrance Street","25 Farrance St E14 7DU","Unknown","Unknown","Valid","","","",""],[224,"Zahir Hussain","Farrance Street","25 Farrance St E14 7DU","Unknown","Unknown","Valid","","","",""],[225,"Md Mokbul Alam","Farrance Street","32 Farrance St E14 7DU","Unknown","Unknown","Valid","","","",""],[226,"Abadur Rahman","Farrance Street","33 Farrance St E14 7DU","Unknown","Unknown","Valid","","","",""],[227,"Akikur Rahman","Farrance Street","33 Farrance St E14 7DU","Unknown","Unknown","Valid","","","",""],[228,"Nazmul Islam","Farrance Street","15 Farrance St E14 7DU","Unknown","Unknown","Valid","","","",""],[229,"Tuan Badoordeen","Gough Walk","101 Gough Walk E14 6HR","Unknown","Unknown","Valid","","","",""],[230,"Ariful islam Chowdhury","Stainsby Road","Flat 11 82 Stainsby Road E14 6JB","Unknown","Unknown","Valid","","","",""],[231,"Nasirul Chowdhury","Stainsby Road","82 Stainsby Road E14 6JB","Unknown","Unknown","Valid","","","",""],[232,"Md Sirajul Haq","Stainsby Road","46 Abbotts Wharf 93 Stainsby Rd E14 6JL","Unknown","Unknown","Valid","","","",""],[233,"Shahan Miah","Stainsby Road","33 Galley Apartments 94 Stainsby Rd E14 6TJ","Unknown","Unknown","Valid","","","",""],[234,"Sajad Hussein","Stainsby Road","Flat 12 Galley Apartments 94 Stainsby Rd E14 6TJ","Unknown","Unknown","Valid","hind grove twice","","",""],[235,"Mujibor Rahman","Stainsby Road","Flat 1 Galley Apartments 94 Stainsby Rd E14 6TJ","Unknown","Unknown","Valid","","","",""],[236,"Mr Samir Miah","Stainsby Road","33 Galley Apartments 94 Stainsby Rd E14 6TJ","Unknown","Unknown","Valid","","","",""],[237,"Mohammed Abdul Hannan","Stainsby Road","Flat 23 Galley Apartments 94 Stainsby Rd E14 6TJ","Yes","Unknown","Valid","Our Panel","","",""],[238,"Israk Ali","Stainsby Road","Flat 1 80 Stainsby Rd E14 6JA","Unknown","Unknown","Valid","","","",""],[239,"Kamrul Hushen","Stainsby Road","46 Abbotts Wharf 93 Stainsby Rd E14 6JL","Unknown","Unknown","Valid","","","",""],[240,"Motiur Rahman","Stainsby Road","92 Stainsby Road E14 6TJ","Unknown","Unknown","Valid","","","",""],[241,"Muhammed Nadimul Ahsan Nahin","Stainsby Road","34 Galley Apartments 94 Stainsby Rd E14 6TJ","Unknown","Unknown","Valid","","","",""],[242,"Md Askir Ali","Stainsby Road","34 Galley Apartments 94 Stainsby Rd E14 6TJ","Yes","Unknown","Valid","Our Panel","","",""],[243,"Boshir Ali","Stainsby Road","31 Galley Apartments 94 Stainsby Rd E14 6TJ","Yes","Unknown","Valid","Our Panel","","",""],[244,"Minhaj Ali","Stainsby Road","31 Galley Apartments 94 Stainsby Rd E14 6TJ","Unknown","Unknown","Valid","","","",""],[245,"Abdal Miah","Stainsby Road","7 Galley Apartments 94 Stainsby Rd E14 6TJ","Yes","Unknown","Valid","Our Panel","","",""],[246,"Abdul Basit","Stainsby Road","Flat 1 82 Stainsby Rd E14 6JB","Unknown","Unknown","Valid","","","",""],[247,"Mokbul Hussain","Stainsby Road","Flat 7 82 Stainsby Rd E14 6JB","Unknown","Unknown","Valid","","","",""],[248,"Kamal Miah","Stainsby Road","27 Stainsby Road E14 6JP","Unknown","Unknown","Valid","","","",""],[249,"Muhammad Tafazzal Ali","Stainsby Road","40 Stainsby Rd E14 6JR","Unknown","Unknown","Valid","","","",""],[250,"Zakaria Hussain","Stainsby Road","11 Stainsby Rd E14 6JP","Unknown","Unknown","Valid","","","",""],[251,"Khaled Miah","Stainsby Road","21 Stainsby Rd E14 6JP","Unknown","Unknown","Valid","","","",""],[252,"Mohammed Nizam Uddin","Stainsby Road","16 Vickreys Wharf Stainsby Rd E14 6JP","Unknown","Unknown","Valid","","","",""],[253,"Mantaqaa Hassan","Stainsby Road","9 Stainsby Rd E14 6JP","Unknown","Unknown","Valid","","","",""],[254,"Mamun Rashid","Stainsby Road","Flat 3 Galley apartment 94 Stainsby Rd E14 6TJ","Yes","Unknown","Valid","Our Panel","","",""],[255,"Ikram Habib","Stainsby Road","Flat 23 Galley Apartment 94 Stainsby Rd E14 6TJ","Unknown","Unknown","Valid","","","",""],[256,"Faruk Ahmed","Upper North Street","Flat 16, 70 Upper North Street E14 6EW","Unknown","Unknown","Valid","","","",""],[257,"Mohammed Bennitts","Upper North Street","103 Mello House, 57 Upper North Street E14 6GW","Unknown","Unknown","Valid","","","",""],[258,"Mühammad Nabeelul Islam","Saracen Street","15 Stanley House Saracen St E14 6EX","Unknown","Unknown","Valid","","","",""],[259,"Mohammad Abdur Rahman","Saracen Street","16 Russell House Saracen Street E14 6HJ","Unknown","Unknown","Valid","","","",""],[260,"Siddikur Rahman","Saracen Street","16 Russell House Saracen Street E14 6HJ","Yes","Unknown","Valid","Our Panel","","",""],[261,"Shariful Islam","Saracen Street","5 Playfair House Saracen St E14 6HD","Unknown","Unknown","Valid","","","",""],[262,"Suhel Uddin","Saracen Street","24 Russell House Saracen St E14 6HJ","Unknown","Unknown","Valid","","","",""],[263,"Liakat Ullah","Saracen Street","Flat 13 Russell House Saracen St E14 6HJ","Unknown","Unknown","Valid","","","",""],[264,"Tahir Ullah","Saracen Street","Flat 13 Russell House Saracen St E14 6HJ","Unknown","Unknown","Valid","","","",""],[265,"Al Amin Tareq","Saracen Street","Pussey House Saracen St E14 6HG","Unknown","Unknown","Valid","","","",""],[266,"Kawsar Islam","Saracen Street","54 Saracen St E14 6HW","Unknown","Unknown","Valid","","","",""],[267,"Sazzad Hossain","Saracen Street","188 Saracen St E14 6HP","Unknown","Unknown","Valid","","","",""],[268,"Md Müstak Ahmod","Stainsby Road","Flat 19, Vickery's Wharf, 87, Stainsby Road, London, E14 6JS","Unknown","Unknown","Valid","","","",""],[269,"Abdul Kadir","Stainsby Road","Flat 4, Pavilion Apartments, 44, Stainsby Road, London, E14 6JR","Unknown","Unknown","Valid","","","",""],[270,"Abdul Jalil","Stainsby Road","36, Stainsby Road, London, E14 6JR","Unknown","Unknown","Valid","","","",""],[271,"Abdul Kamal","Stainsby Road","36, Stainsby Road, London, E14 6JR","Unknown","Unknown","Valid","","","",""],[272,"Dawud Rahman","Stainsby Road","38, Stainsby Road, London, E14 6JR","Unknown","Unknown","Valid","","","",""],[273,"Ibrahim Yaqub Rahman","Stainsby Road","38, Stainsby Road, London, E14 6JR","Unknown","Unknown","Valid","","","",""],[274,"Zuber Uddin","Stainsby Road","Flat 5 Vickreys Wharf 87 Stainsby Road E14 6JS","Unknown","Unknown","Valid","","","",""],[275,"Alam Hussain","Stainsby Road","7 Vickreys Wharf 87 Stainsby Road E14 6JS","Yes","Unknown","Valid","Our Panel","","",""],[276,"Juel Miah","Stainsby Road","Flat 15 Vickreys Wharf 87 Stainsby Road E14 6JS","Unknown","Unknown","Valid","","","",""],[277,"Dihan Dabir","Stainsby Road","Flat 15 Vickreys Wharf 87 Stainsby Road E14 6JS","Unknown","Unknown","Valid","","","",""],[278,"Joynal Uddin","Stainsby Road","Flat 11 80 Stainsby Road E14 6JA","Unknown","Unknown","Valid","","","",""],[279,"Banta Tunkara","Stainsby Road","Flat 33 Vickreys Wharf 87 Stainsby Rd E14 6JS","Unknown","Unknown","Valid","","","",""],[280,"Abdoulie Trawally Sidebeh","Stainsby Road","Flat 33 Vickreys Wharf 87 Stainsby Rd E14 6JS","Unknown","Unknown","Valid","","","",""],[281,"Muhamadou Dukuray","Stainsby Road","Flat 33 Vickreys Wharf 87 Stainsby Rd E14 6JS","Unknown","Unknown","Valid","","","",""],[282,"Mohd Kamal Uddin","Stainsby Road","Flat 65 Vickreys Wharf 87 Stainsby Rd E14 6JS","Unknown","Unknown","Valid","","","",""],[283,"Monsur Ali","Stainsby Road","Flat 44 Vickreys Wharf 87 Stainsby Rd E14 6JS","Unknown","Unknown","Valid","","","",""],[284,"Odüd Miah","Stainsby Road","Flat 44 Vickreys Wharf 87 Stainsby Rd E14 6JS","Unknown","Unknown","Valid","","","",""],[285,"Hussain All","Stainsby Road","Flat 44 Vickreys Wharf 87 Stainsby Rd E14 6JS","Unknown","Unknown","Valid","","","",""],[286,"Mizanur Rahman","Stainsby Road","74 Abbotts Wharf Stainsby Rd E14 6JN","Unknown","Unknown","Valid","","","",""],[287,"Jalal Uddin Talukder","Stainsby Road","Flat 5 Abbotts Wharf Stainsby Rd E14 6JN","Unknown","Unknown","Valid","","","",""],[288,"Showkoth Ali","Stainsby Road","50 Stainsby Rd E14 6JR","Unknown","Unknown","Valid","","","",""],[289,"Md Shahed Choudruy","Stainsby Road","Flat 6 88 Stainsby Rd E14 6JB","Unknown","Unknown","Valid","","","",""],[290,"Mr Noor Miah","Stainsby Road","Flat 10 Pavillion Apartment 44 Stainsby Road E14 6JR","Unknown","Unknown","Valid","","","",""],[291,"Anwar Hussain","Stainsby Road","Flat 11 Pavillion Apartment 44 Stainsby Road E14 6JR","Unknown","Unknown","Valid","","","",""],[292,"Mohammed Emran Ali","Stainsby Road","50 Stainsby Rd E14 6JR","Unknown","Unknown","Valid","","","",""],[293,"Mohammed Iqram Ali","Stainsby Road","50 Stainsby Rd E14 6JR","Unknown","Unknown","Valid","","","",""],[294,"MD Rezaul Dewan","Canton Street","Flat 18 Baring House Canton St E14 6JW","Unknown","Unknown","Valid","","","",""],[295,"Abdus Salam Munsi","Canton Street","5 Luke House 7-9 Canton St E14 6JG","Unknown","Unknown","Valid","","","",""],[296,"Suhel Miah","Canton Street","6 Canton street E14 6ES","Unknown","Unknown","Valid","","","",""],[297,"MD Suaybur Rahman","Canton Street","11 Hopkins House Canton St E14 6HL","Unknown","Unknown","Valid","","","",""],[298,"Anwar Ali","Dod Street","Flat 13 Gurdon House Dod Street E14 7EB","Unknown","Unknown","Valid","","","",""],[299,"Abu Sufian Ali","Dod Street","Flat 2 Meanthate House Dod Street E14 7DZ","Unknown","Unknown","Valid","","","",""],[300,"Mohammad Haroon Anwary","Dod Street","11 Trendell House Dod Street E14 7EA","Unknown","Unknown","Valid","","","",""],[301,"Abu Sayeed Rahim","Dod Street","Flat 13 Trendell House Dod St E14 7EA","Unknown","Unknown","Valid","","","",""],[302,"Imran Mohammad Anwary","Dod Street","11 Trendell House Dod Street E14 7EA","Unknown","Unknown","Valid","","","",""],[303,"MD Nurul Hasan","Dod Street","15 Charlesworth House Dod Street E14 7EE","Unknown","Unknown","Valid","","","",""],[304,"Mohammed Atowar Hussein","Dod Street","24 Charlesworth House Dod Street E14 7EE","Unknown","Unknown","Valid","","","",""],[305,"Azizul Hoque","Dod Street","25 Charlesworth House Dod St E14 7EE","Unknown","Unknown","Valid","","","",""],[306,"Misbah Rahman","Dod Street","20 Charlesworth House Dod St E14 7EE","Unknown","Unknown","Valid","","","",""],[307,"Rubel","Dod Street","11 Menteathe House Dod Street E14 7DZ","Unknown","Unknown","Valid","","","",""],[308,"Saif Ali","Dod Street","Flat 13 Gurdon House Dod Street London E14 7EB","Unknown","Unknown","Valid","","","",""],[309,"Abdul ahad Siddique","Dod Street","7 Trendell House Dod Street E14 7EA","Unknown","Unknown","Valid","","","",""],[310,"Anna Miah","Dod Street","4 Donne House Dod Street E14 7EF","Unknown","Unknown","Valid","","","",""],[311,"Humayun Rashid","Dod Street","12 Gurdon House Dod Street E14 7EB","Unknown","Unknown","Valid","","","",""],[312,"Harunoor Rashid","Dod Street","12 Gurdon House Dod Street E14 7EB","Unknown","Unknown","Valid","","","",""],[313,"Mohsin Mallu","Dod Street","Flat 402 Dod Street E14 7EP","Unknown","Unknown","Valid","","","",""],[314,"Dilwar Hussain","Dod Street","11 Plessey Building Dod Street London E14 7ET","Unknown","Unknown","Valid","","","",""],[315,"Habib Sufian","Dod Street","Flat 3 Plessey Building 25 Dod Street London E14 7ET","Yes","Unknown","Valid","Our Panel","","",""],[316,"Syed tarif Ali","Dod Street","30 Plessey Building 25 Dod Street London E14 7ET","Unknown","Unknown","Valid","","","",""],[317,"Syed Ishaq Ali","Dod Street","30 Plessey Building 25 Dod Street London E14 7ET","Unknown","Unknown","Valid","","","",""],[318,"Bachu Miah","Dod Street","14 Menteath House Dod Street E14 7DZ","Unknown","Unknown","Valid","","","",""],[319,"Jakirul Islam","Dod Street","Flat 10 Menteath House Dod Street E14 7DZ","Unknown","Unknown","Valid","","","",""],[320,"Mohammad Ahmed","Dod Street","10 Menteath House Dod St E14 7DZ","Unknown","Unknown","Valid","","","",""],[321,"Muhammad Sundor Siddek Ali","Dod Street","10 Menteath House Dod St E14 7DZ","Unknown","Unknown","Valid","","","",""],[322,"Tajul Islam","Dod Street","Flat 10 Menteath House Dod Street E14 7DZ","Unknown","Unknown","Valid","","","",""],[323,"AbdurRahman aden","Dod Street","12 Menteath House Dod Street E14 7DZ","Unknown","Unknown","Valid","","","",""],[324,"Mahmud Ferdous","Stainsby Road","40 Vickery's Wharf 87 Stainsby Rd London E14 6JS","Unknown","Unknown","Valid","","","",""],[325,"Olatif Muddasir","Stainsby Road","Flat 33 Vickery's Wharf 87 Stainsby Road London E14 6JS","Unknown","Unknown","Valid","","","",""],[326,"Mohammed Miah Shahista","Pigott Street","31 Pigtott Street E14 7DH","Unknown","Unknown","Valid","","","",""],[327,"Mujibur Rahman","Stainsby Road","87 Stainsby Rd London E14 6JS","Unknown","Unknown","Valid","","","",""],[328,"Abu Taruk","Kildare Walk","9 Kildare Wharf E14 6TZ","Unknown","Unknown","Valid","road name wrong","","",""],[329,"Md Anwar Hussain","Upper North Street","Flat 7 Colborne house london E14 6EU","Unknown","Unknown","Valid","","","",""],[330,"Jubar Ahmed","Out of Area","Flat 22, Carnell Apartments, 2 St Annes Row, London, E14 7GB","Unknown","Unknown","Out of Area","Out of Area","","",""],[331,"Asim Hussain","Dod Street","Flat 21 Plessey Building 25 Dod Street London E14 7ET","Unknown","Unknown","Valid","","","",""],[332,"Abul Hasnat","Lindfield Street","Flat 31 Anglesey House Lindfield Street London E14 6HS","Unknown","Unknown","Valid","","","",""],[333,"Mohammed Amin","Lindfield Street","Flat 4 Anglesey House Lindfield Street London E14 6HS","Unknown","Unknown","Valid","","","",""],[334,"Mohammed Muse","Lindfield Street","Flat 33 Anglesey House Lindfield Street London E14 6HS","Unknown","Unknown","Valid","","","",""],[335,"Monap Hassan","Hind Grove","57 Hind Grove  E14 6HT","Unknown","Unknown","Valid","not saracen st","","",""],[336,"Milon Bilal","Dod Street","20 Dod Street E14 7EE","Unknown","Unknown","Valid","","","",""],[337,"Sidek Ali","Dod Street","10 Menteath House E14 7DZ","Unknown","Unknown","Valid","not full address","","",""],[338,"Sajad Miah","Stainsby Road","52 Stainsby Road E14 6JZ","Unknown","Unknown","Valid","","","",""],[339,"Inam Ahmed","Lindfield Street","407 Lucienne Court 72 Lindfield Street E14 6GT","Unknown","Unknown","Valid","","","",""],[340,"Hafez Bhuiyan","Dod Street","Flat 2 Gurdon House Dod Street London E14 7EB","Unknown","Unknown","Valid","","","",""],[341,"Olawale Mudashir","Stainsby Road","Flat 33 Vickery's Wharf 87 Stainsby Road London E14 6JS","Unknown","Unknown","Valid","","","",""]];
+
+const voters=RAW.map(r=>({id:r[0],name:r[1],street:r[2],address:r[3],support:r[4],turnout:r[5],validity:r[6],notes:r[7],phone:r[8],contacted:r[9],canvasser:r[10]}));
+let activityLog=[];
+const KEY='taqwa_mob_v1',LOGKEY='taqwa_mob_log_v1',BKPKEY='taqwa_mob_bkp_v1';
+
+// ── PERSIST ──
+function persist(){
+  localStorage.setItem(KEY,JSON.stringify(voters.map(v=>({id:v.id,s:v.support,t:v.turnout,vl:v.validity,n:v.notes,ph:v.phone,co:v.contacted,ca:v.canvasser}))));
+  localStorage.setItem(LOGKEY,JSON.stringify(activityLog));
+  autoBackup();
+}
+function hydrate(){
+  try{const d=JSON.parse(localStorage.getItem(KEY)||'[]');d.forEach(u=>{const v=voters.find(x=>x.id===u.id);if(v){v.support=u.s;v.turnout=u.t;v.validity=u.vl;v.notes=u.n||v.notes;v.phone=u.ph||'';v.contacted=u.co||'';v.canvasser=u.ca||'';}});}catch{}
+  try{activityLog=JSON.parse(localStorage.getItem(LOGKEY)||'[]');}catch{}
+}
+hydrate();
+
+// ── TOAST ──
+let toastTimer;
+function toast(msg,color='#22d3a0'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.background=color;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── COUNTDOWN ──
+function updateCountdown(){
+  const el=document.getElementById('countdown');
+  const diff=new Date('2026-03-29T07:00:00')-new Date();
+  if(diff<=0){el.textContent='TODAY 🗳';document.getElementById('polling-day-banner').style.display='block';return;}
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  if(d>0)el.textContent=`${d}d ${h}h`;
+  else el.textContent=`${h}h ${m}m`;
+}
+
+// ── STATS ──
+function calcStats(){
+  let yes=0,lean=0,no=0,unk=0,voted=0,notV=0,rem=0,tUnk=0,valid=0,dup=0,inv=0,chk=0,oa=0;
+  voters.forEach(v=>{
+    if(v.validity==='Valid')valid++;
+    else if(v.validity==='Duplicate')dup++;
+    else if(v.validity==='Invalid')inv++;
+    else if(v.validity==='Needs Check')chk++;
+    else if(v.validity==='Out of Area')oa++;
+    if(['Valid','Needs Check'].includes(v.validity)){
+      if(v.support==='Yes')yes++;else if(v.support==='Lean Positive')lean++;else if(v.support==='No')no++;else unk++;
+      if(v.turnout==='Voted')voted++;else if(v.turnout==='Not Voted')notV++;else if(v.turnout==='Need Reminder')rem++;else tUnk++;
+    }
+  });
+  return{yes,lean,no,unk,voted,notV,rem,tUnk,valid,dup,inv,chk,oa};
+}
+
+// ── CHARTS ──
+let supportChart,winChart,turnoutChart,validityChart;
+const CD={plugins:{legend:{display:false},tooltip:{backgroundColor:'#161c2e',borderColor:'#1e2840',borderWidth:1,padding:8,titleColor:'#e8ecf4',bodyColor:'#6b7a99'}},animation:{duration:700}};
+
+function initCharts(){
+  const s=calcStats();const wss=Math.round(s.yes+s.lean*0.5);const target=171;
+  supportChart=new Chart(document.getElementById('supportChart'),{type:'doughnut',data:{labels:['Yes','Lean+','No','Unknown'],datasets:[{data:[s.yes,s.lean,s.no,s.unk],backgroundColor:['#22d3a0','#4f8ef7','#f5424e','#3a4560'],borderColor:'#161c2e',borderWidth:3,hoverOffset:4}]},options:{...CD,cutout:'70%',maintainAspectRatio:false}});
+  winChart=new Chart(document.getElementById('winChart'),{type:'doughnut',data:{labels:['Score','Rem'],datasets:[{data:[Math.min(wss,target),Math.max(0,target-wss)],backgroundColor:['#22d3a0','#1e2840'],borderColor:'#161c2e',borderWidth:3}]},options:{...CD,cutout:'76%',maintainAspectRatio:false,rotation:-90,circumference:180}});
+  turnoutChart=new Chart(document.getElementById('turnoutChart'),{type:'bar',data:{labels:['Voted','Not Voted','Reminder','Unknown'],datasets:[{data:[s.voted,s.notV,s.rem,s.tUnk],backgroundColor:['#22d3a0','#f5424e','#f5c842','#3a4560'],borderRadius:6,borderSkipped:false}]},options:{...CD,maintainAspectRatio:false,scales:{x:{grid:{color:'rgba(30,40,64,.4)'},ticks:{color:'#6b7a99',font:{size:9}}},y:{grid:{color:'rgba(30,40,64,.4)'},ticks:{color:'#6b7a99',font:{size:9}},beginAtZero:true}}}});
+  validityChart=new Chart(document.getElementById('validityChart'),{type:'doughnut',data:{labels:['Valid','Duplicate','Invalid','Needs Check','Out of Area'],datasets:[{data:[s.valid,s.dup,s.inv,s.chk,s.oa],backgroundColor:['#22d3a0','#9b6cf7','#f5424e','#f7834f','#3a4560'],borderColor:'#161c2e',borderWidth:3,hoverOffset:4}]},options:{...CD,cutout:'70%',maintainAspectRatio:false}});
+  document.getElementById('validityLegend').innerHTML=['Valid','Dup','Inv','Chk','OOA'].map((l,i)=>`<div class="leg-item"><div class="leg-dot" style="background:${'#22d3a0 #9b6cf7 #f5424e #f7834f #3a4560'.split(' ')[i]}"></div>${l}</div>`).join('');
+}
+
+function updateCharts(){
+  const s=calcStats();const wss=Math.round(s.yes+s.lean*0.5);const target=171;
+  // KPIs
+  document.getElementById('kpi-active').textContent=s.yes+s.lean;
+  document.getElementById('kpi-wss').textContent=wss;
+  document.getElementById('kpi-gap').textContent=Math.max(0,target-wss);
+  const prog=Math.min(100,Math.round(wss/target*100));
+  document.getElementById('kpi-prog').textContent=prog+'%';
+  document.getElementById('kpi-prog-bar').style.width=prog+'%';
+  document.getElementById('gauge-score').textContent=wss;
+  document.getElementById('gl-cur').textContent=wss;
+  document.getElementById('gl-rem').textContent=Math.max(0,target-wss);
+  document.getElementById('leg-yes').textContent=s.yes;
+  document.getElementById('leg-lean').textContent=s.lean;
+  document.getElementById('leg-no').textContent=s.no;
+  document.getElementById('leg-unk').textContent=s.unk;
+  document.getElementById('pd-voted').textContent=s.voted;
+  document.getElementById('pd-remind').textContent=s.rem;
+  document.getElementById('pd-notvoted').textContent=s.notV;
+  document.getElementById('pd-pct').textContent=Math.round(s.voted/Math.max(1,s.valid+s.chk)*100)+'%';
+  document.getElementById('last-updated').textContent='Updated '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  if(supportChart){supportChart.data.datasets[0].data=[s.yes,s.lean,s.no,s.unk];supportChart.update('active');}
+  if(winChart){winChart.data.datasets[0].data=[Math.min(wss,target),Math.max(0,target-wss)];winChart.update('active');}
+  if(turnoutChart){turnoutChart.data.datasets[0].data=[s.voted,s.notV,s.rem,s.tUnk];turnoutChart.update('active');}
+  if(validityChart){validityChart.data.datasets[0].data=[s.valid,s.dup,s.inv,s.chk,s.oa];validityChart.update('active');}
+}
+
+// ── NAVIGATION ──
+let currentScreen='home';
+function navTo(id){
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='';});
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const scr=document.getElementById('screen-'+id);
+  if(scr){scr.classList.add('active');scr.style.display='block';scr.scrollTop=0;}
+  const nav=document.getElementById('nav-'+id);
+  if(nav)nav.classList.add('active');
+  currentScreen=id;
+  if(id==='streets')renderStreets();
+  if(id==='reminders')renderReminders();
+  if(id==='log'){renderLogEntries();renderLeaderboard();}
+  if(id==='more'){renderPrintSheet();updateBackupMeta();renderThemeGrid();mobLoadSheetsCfg();}
+  if(id==='backup')renderBackupList();
+  if(id==='voters')renderVoters();
+}
+
+// ── VOTER LIST ──
+const PAGE=30;let voterPage=1;let filteredVoters=[];let chipFilter='all';
+
+function setChip(el,filter){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  chipFilter=filter;
+  voterPage=1;
+  renderVoters();
+}
+
+function applyFilters(){
+  voterPage=1;renderVoters();
+}
+
+function getFilteredVoters(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  return voters.filter(v=>{
+    if(q&&!v.name.toLowerCase().includes(q)&&!v.address.toLowerCase().includes(q))return false;
+    if(chipFilter==='all')return true;
+    if(chipFilter==='__dup')return v.validity==='Duplicate';
+    if(chipFilter==='__remind')return v.turnout==='Need Reminder';
+    return v.support===chipFilter;
+  });
+}
+
+function supportPillClass(s){return s==='Yes'?'vc-pill pill-yes':s==='Lean Positive'?'vc-pill pill-lean':s==='No'?'vc-pill pill-no':'vc-pill pill-unk';}
+function turnoutPillClass(t){return t==='Voted'?'vc-pill pill-voted':t==='Need Reminder'?'vc-pill pill-remind':t==='Not Voted'?'vc-pill pill-not':'vc-pill pill-unk';}
+
+function renderVoters(){
+  const list=getFilteredVoters();
+  filteredVoters=list;
+  const total=list.length;
+  const shown=list.slice(0,voterPage*PAGE);
+  document.getElementById('voter-count-bar').textContent=`${total} voter${total!==1?'s':''} · tap to edit`;
+  document.getElementById('chip-all-cnt').textContent=voters.length;
+  document.getElementById('voterList').innerHTML=shown.map(v=>{
+    const rc=v.validity==='Duplicate'?'dup':v.validity==='Invalid'||v.validity==='Out of Area'?'inv':'';
+    const badge=v.validity==='Duplicate'?'<span class="mini-badge mb-dup">DUPE</span>':v.validity==='Out of Area'?'<span class="mini-badge mb-oa">OOA</span>':v.validity==='Invalid'?'<span class="mini-badge mb-inv">INV</span>':v.validity==='Needs Check'?'<span class="mini-badge mb-chk">CHK</span>':'';
+    return`<div class="voter-card ${rc}" onclick="openVoterModal(${v.id})">
+      <div class="vc-top">
+        <div><div class="vc-name">${v.name}</div><div class="vc-id">#${v.id} · ${v.street}</div></div>
+        <div class="vc-badges">${badge}</div>
+      </div>
+      <div class="vc-addr">${v.address}</div>
+      <div class="vc-pills">
+        <span class="${supportPillClass(v.support)}">${v.support==='Lean Positive'?'Lean+':v.support}</span>
+        <span class="${turnoutPillClass(v.turnout)}">${v.turnout==='Need Reminder'?'Reminder':v.turnout}</span>
+        ${v.canvasser?`<span class="vc-pill" style="background:#0d2028;color:#4f8ef7;border:1px solid #4f8ef7">👤 ${v.canvasser}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  const loadBtn=document.getElementById('loadMoreBtn');
+  loadBtn.style.display=shown.length<total?'block':'none';
+  if(shown.length<total)loadBtn.textContent=`Load more (${total-shown.length} remaining) ↓`;
+}
+
+function loadMore(){voterPage++;renderVoters();}
+
+// ── VOTER MODAL ──
+let editingId=null;
+function openVoterModal(id){
+  if(accessLevel==='viewer'){toast('👁 View-only — tap the mode button to sign in','#f5c842');return;}
+  const v=voters.find(x=>x.id===id);if(!v)return;
+  editingId=id;
+  document.getElementById('modal-name').textContent=v.name;
+  document.getElementById('modal-meta').textContent='#'+v.id+' · '+v.street;
+  document.getElementById('modal-id-badge').textContent='#'+v.id;
+  document.getElementById('modal-addr').textContent=v.address;
+  const ms=document.getElementById('me-support');ms.value=v.support;styleStatusSelect(ms,'s');
+  const mt=document.getElementById('me-turnout');mt.value=v.turnout;styleStatusSelect(mt,'t');
+  const mv=document.getElementById('me-validity');mv.value=v.validity;styleStatusSelect(mv,'v');
+  document.getElementById('me-phone').value=v.phone||'';
+  document.getElementById('me-canvasser').value=v.canvasser||'';
+  document.getElementById('me-contacted').value=v.contacted||'';
+  document.getElementById('me-notes').value=v.notes||'';
+  document.getElementById('voterModal').classList.add('open');
+}
+function closeVoterModal(){document.getElementById('voterModal').classList.remove('open');editingId=null;}
+
+function styleStatusSelect(sel,prefix){
+  const val=sel.value.replace(/\s+/g,'');
+  sel.className='form-select status-select '+prefix+'-'+val;
+}
+
+function saveModal(){
+  const v=voters.find(x=>x.id===editingId);if(!v)return;
+  v.support=document.getElementById('me-support').value;
+  v.turnout=document.getElementById('me-turnout').value;
+  v.validity=document.getElementById('me-validity').value;
+  v.phone=document.getElementById('me-phone').value;
+  v.canvasser=document.getElementById('me-canvasser').value;
+  v.contacted=document.getElementById('me-contacted').value;
+  v.notes=document.getElementById('me-notes').value;
+  closeVoterModal();
+  persist();updateCharts();renderVoters();renderStreets();renderReminders();updateReminderBadge();
+  toast('✓ Saved — '+v.name.split(' ')[0]);
+}
+
+// ── STREETS ──
+function renderStreets(){
+  const streets=[...new Set(voters.map(v=>v.street))].sort();
+  const data=streets.map(st=>{
+    const sv=voters.filter(v=>v.street===st&&['Valid','Needs Check'].includes(v.validity));
+    const t=sv.length||1;
+    const yes=sv.filter(v=>v.support==='Yes').length;
+    const lean=sv.filter(v=>v.support==='Lean Positive').length;
+    const no=sv.filter(v=>v.support==='No').length;
+    const unk=sv.length-yes-lean-no;
+    return{st,total:sv.length,yes,lean,no,unk,pct:Math.round((yes+lean)/t*100)};
+  }).sort((a,b)=>b.pct-a.pct);
+
+  // Stat cards — top 6
+  document.getElementById('streetStatGrid').innerHTML=data.slice(0,6).map(d=>`
+    <div class="street-stat-card" data-street="${d.st}">
+      <div class="ss-name">${d.st}</div>
+      <div class="ss-pct">${d.pct}%</div>
+      <div class="ss-bar"><div class="ss-bar-fill" style="width:${d.pct}%"></div></div>
+      <div class="ss-meta">${d.yes}✅ ${d.lean}🔵 / ${d.total} voters</div>
+    </div>`).join('');
+
+  // Full heatmap
+  // Add delegation listeners for stat cards after render
+  setTimeout(()=>{
+    document.querySelectorAll('#streetStatGrid [data-street]').forEach(el=>{
+      el.onclick=()=>filterByStreet(el.dataset.street);
+    });
+  },0);
+
+  document.getElementById('streetHeatmap').innerHTML=data.map(({st,total,yes,lean,no,unk,pct})=>{
+    const t=total||1;
+    const yW=Math.round(yes/t*100),lW=Math.round(lean/t*100),nW=Math.round(no/t*100),uW=100-yW-lW-nW;
+    return`<div class="heatmap-row" data-street="${st}">
+      <div class="hm-top">
+        <div class="hm-name">${st}</div>
+        <div class="hm-count">${total} voters</div>
+        <div class="hm-pct-badge">${pct}%</div>
+      </div>
+      <div class="hm-bar">
+        ${yW>0?`<div class="hm-seg" style="width:${yW}%;background:#22d3a0;flex-shrink:0">${yW>10?yes:''}</div>`:''}
+        ${lW>0?`<div class="hm-seg" style="width:${lW}%;background:#4f8ef7;flex-shrink:0">${lW>10?lean:''}</div>`:''}
+        ${nW>0?`<div class="hm-seg" style="width:${nW}%;background:#f5424e;flex-shrink:0">${nW>10?no:''}</div>`:''}
+        ${uW>0?`<div class="hm-seg" style="width:${uW}%;background:#2a3550;flex-shrink:0">${uW>10?unk:''}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  // delegation for heatmap rows
+  setTimeout(()=>{
+    document.querySelectorAll('#streetHeatmap [data-street]').forEach(el=>{
+      el.onclick=()=>filterByStreet(el.dataset.street);
+    });
+  },50);
+}
+
+function filterByStreet(st){
+  navTo('voters');
+  document.getElementById('searchInput').value=st;
+  // reset chip to all
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  document.querySelector('[data-filter="all"]').classList.add('active');
+  chipFilter='all';
+  renderVoters();
+}
+
+// ── ACTIVITY LOG ──
+let logVoterId=null,selectedOutcome='Contacted';
+
+function toggleLogForm(){
+  const panel=document.getElementById('log-form-panel');
+  const btn=document.getElementById('log-form-toggle-btn');
+  const isOpen=panel.style.display!=='none';
+  panel.style.display=isOpen?'none':'block';
+  btn.textContent=isOpen?'+ Log a New Contact':'✕ Cancel';
+  if(!isOpen){
+    // reset form on open
+    document.getElementById('log-voter').value='';
+    document.getElementById('log-canvasser').value='';
+    document.getElementById('log-suggestions').style.display='none';
+    logVoterId=null;
+    document.querySelectorAll('.outcome-chip').forEach(c=>c.className='outcome-chip');
+    selectedOutcome='Contacted';
+  }
+}
+
+function searchLogVoter(q){
+  if(!q||q.length<2){box.style.display='none';logVoterId=null;return;}
+  const matches=voters.filter(v=>v.name.toLowerCase().includes(q.toLowerCase())).slice(0,8);
+  if(!matches.length){box.style.display='none';return;}
+  box.innerHTML=matches.map(v=>`<div class="log-sug-item" data-vid="${v.id}" data-label="${v.name} — ${v.street}">${v.name}<span style="color:var(--muted);font-size:10px;margin-left:6px">${v.street}</span></div>`).join('');
+  box.style.display='block';
+  box.querySelectorAll('.log-sug-item').forEach(el=>{
+    el.addEventListener('click',()=>pickLogVoter(+el.dataset.vid, el.dataset.label));
+  });
+}
+function pickLogVoter(id,label){
+  logVoterId=id;
+  document.getElementById('log-voter').value=label;
+  document.getElementById('log-suggestions').style.display='none';
+}
+function selectOutcome(el){
+  document.querySelectorAll('.outcome-chip').forEach(c=>c.className='outcome-chip');
+  selectedOutcome=el.dataset.outcome;
+  el.className='outcome-chip sel-'+selectedOutcome.replace(' ','.');
+}
+function addLogEntry(){
+  if(!logVoterId){toast('Select a voter first','#f5424e');return;}
+  const name=document.getElementById('log-canvasser').value.trim();
+  if(!name){toast('Enter your name','#f5424e');return;}
+  const v=voters.find(x=>x.id===logVoterId);
+  const entry={id:Date.now(),voterId:logVoterId,voterName:v.name,street:v.street,canvasser:name,outcome:selectedOutcome,date:new Date().toISOString()};
+  activityLog.unshift(entry);
+  if(v){v.canvasser=name;v.contacted=new Date().toISOString().slice(0,10);}
+  persist();
+  // close the form panel
+  document.getElementById('log-form-panel').style.display='none';
+  document.getElementById('log-form-toggle-btn').textContent='+ Log a New Contact';
+  document.getElementById('log-voter').value='';
+  document.getElementById('log-canvasser').value='';
+  logVoterId=null;
+  renderLogEntries();renderLeaderboard();
+  toast('✓ Contact logged — '+v.name.split(' ')[0]);
+}
+
+function renderLogEntries(){
+  const el=document.getElementById('logEntries');
+  if(!activityLog.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No contacts logged yet.</div>';return;}
+  el.innerHTML=activityLog.slice(0,50).map(e=>`
+    <div class="log-entry-card">
+      <div class="le-top">
+        <div class="le-voter">${e.voterName}</div>
+        <button class="del-btn" onclick="delLog(${e.id})">✕</button>
+      </div>
+      <div class="le-meta">${e.street} · <span style="color:var(--accent)">${e.canvasser}</span><span class="le-outcome oc-${e.outcome.replace(' ','.')}">${e.outcome}</span></div>
+      <div class="le-time">${new Date(e.date).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`).join('');
+}
+function delLog(id){activityLog=activityLog.filter(e=>e.id!==id);persist();renderLogEntries();renderLeaderboard();}
+
+function renderLeaderboard(){
+  const counts={};
+  activityLog.forEach(e=>{
+    if(!counts[e.canvasser])counts[e.canvasser]={total:0,contacted:0,noAnswer:0,refused:0,callback:0};
+    counts[e.canvasser].total++;
+    if(e.outcome==='Contacted')counts[e.canvasser].contacted++;
+    else if(e.outcome==='No Answer')counts[e.canvasser].noAnswer++;
+    else if(e.outcome==='Refused')counts[e.canvasser].refused++;
+    else counts[e.canvasser].callback++;
+  });
+  const sorted=Object.entries(counts).sort((a,b)=>b[1].total-a[1].total);
+  const maxTotal=sorted[0]?sorted[0][1].total:1;
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('leaderboard').innerHTML=sorted.map(([name,c],i)=>`
+    <div class="lb-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <span class="lb-rank">${medals[i]||'#'+(i+1)}</span>
+        <span class="lb-name">${name}</span>
+        <span class="lb-total">${c.total}</span>
+      </div>
+      <div style="display:flex;gap:10px;font-size:10px;color:var(--muted);margin-bottom:6px;">
+        <span style="color:#22d3a0">✅ ${c.contacted}</span>
+        <span>🔕 ${c.noAnswer}</span>
+        <span style="color:#f5424e">❌ ${c.refused}</span>
+        <span style="color:#f5c842">🔔 ${c.callback}</span>
+      </div>
+      <div class="lb-bar"><div class="lb-bar-fill" style="width:${Math.round(c.total/maxTotal*100)}%"></div></div>
+    </div>`).join('');
+  if(!sorted.length)document.getElementById('leaderboard').innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:12px;">No activity yet.</div>';
+}
+
+// ── REMINDERS ──
+function renderReminders(){
+  const high=[],mid=[],panel=[];
+  voters.forEach(v=>{
+    if(v.validity==='Needs Check')high.push({v,r:'Address/identity check needed'});
+    if(v.validity==='Duplicate')high.push({v,r:'Duplicate record — review'});
+    if(v.support!=='Unknown'&&v.turnout==='Unknown'&&!v.contacted)mid.push({v,r:'Supporter — confirm voting plan'});
+    if(v.support==='Unknown'&&!v.canvasser)mid.push({v,r:'Not yet canvassed'});
+    if(v.notes&&v.notes.includes('Our Panel'))panel.push({v,r:'Our Panel — confirm turnout'});
+  });
+  document.getElementById('rc-high-cnt').textContent=high.length;
+  document.getElementById('rc-mid-cnt').textContent=Math.min(mid.length,99);
+  document.getElementById('rc-panel-cnt').textContent=panel.length;
+  const render=(items,id,max=20)=>document.getElementById(id).innerHTML=items.slice(0,max).map(({v,r})=>`
+    <div class="reminder-item" onclick="openVoterModal(${v.id})">
+      <div><div class="ri-name">${v.name}</div><div class="ri-street">${v.street}</div><div class="ri-reason">${r}</div></div>
+      <span style="color:var(--muted);font-size:18px">›</span>
+    </div>`).join('');
+  render(high,'rem-high');
+  render(mid.slice(0,30),'rem-mid');
+  render(panel,'rem-panel');
+  updateReminderBadge();
+}
+function updateReminderBadge(){
+  const urgent=voters.filter(v=>v.validity==='Needs Check'||v.validity==='Duplicate').length;
+  const badge=document.getElementById('nav-badge-rem');
+  if(urgent>0){badge.style.display='flex';badge.textContent=urgent>9?'9+':urgent;}
+  else badge.style.display='none';
+}
+function toggleReminderSection(id){
+  const el=document.getElementById(id);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+// ── PRINT / EXPORT ──
+function renderPrintSheet(){
+  const selStreet=document.getElementById('print-street-sel').value;
+  const selSup=document.getElementById('print-support-sel').value;
+  let list=voters.filter(v=>['Valid','Needs Check'].includes(v.validity));
+  if(selStreet)list=list.filter(v=>v.street===selStreet);
+  if(selSup)list=list.filter(v=>v.support===selSup);
+  list.sort((a,b)=>a.street.localeCompare(b.street)||a.name.localeCompare(b.name));
+  const byStreet={};list.forEach(v=>{(byStreet[v.street]=byStreet[v.street]||[]).push(v);});
+  const supColor={Yes:'#22d3a0','Lean Positive':'#4f8ef7',No:'#f5424e',Unknown:'#6b7a99'};
+  document.getElementById('printContent').innerHTML=Object.entries(byStreet).map(([st,vs])=>`
+    <div class="print-card">
+      <div class="print-street-hdr">📍 ${st} — ${vs.length} voters</div>
+      ${vs.map((v,i)=>`<div class="print-voter-row">
+        <div class="pv-num">${i+1}</div>
+        <div class="pv-info"><div class="pv-name">${v.name}</div><div class="pv-addr">${v.address}${v.phone?` · 📱${v.phone}`:''}</div></div>
+        <div><span class="pv-support" style="background:${supColor[v.support]}22;color:${supColor[v.support]};border:1px solid ${supColor[v.support]}">${v.support==='Lean Positive'?'Lean+':v.support}</span></div>
+        <div style="width:22px;height:22px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;"></div>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+function exportCSV(){
+  const headers=['ID','Name','Street','Address','Support','Turnout','Validity','Phone','Contacted','Canvasser','Notes'];
+  const rows=voters.map(v=>[v.id,`"${v.name}"`,`"${v.street}"`,`"${v.address}"`,v.support,v.turnout,v.validity,v.phone||'',v.contacted||'',v.canvasser||'',`"${(v.notes||'').replace(/"/g,"'")}"`].join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='taqwa_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  toast('✓ CSV downloaded');
+}
+
+// ── BACKUPS ──
+const MAX_BACKUPS=20;
+function getBackups(){try{return JSON.parse(localStorage.getItem(BKPKEY)||'[]');}catch{return[];}}
+function saveBackups(arr){localStorage.setItem(BKPKEY,JSON.stringify(arr));}
+let autoBackupTimer=null;
+function autoBackup(){
+  clearTimeout(autoBackupTimer);
+  autoBackupTimer=setTimeout(()=>createBackup('auto'),3000);
+}
+function createBackup(type='auto'){
+  const backups=getBackups();
+  const snap={ts:new Date().toISOString(),type,voters:JSON.parse(JSON.stringify(voters)),log:JSON.parse(JSON.stringify(activityLog)),stats:calcStats()};
+  backups.unshift(snap);
+  if(backups.length>MAX_BACKUPS)backups.splice(MAX_BACKUPS);
+  saveBackups(backups);
+  if(type==='manual')toast('💾 Backup saved');
+  updateBackupMeta();
+  if(currentScreen==='backup')renderBackupList();
+}
+function fmtTs(iso){const d=new Date(iso);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+function updateBackupMeta(){
+  const b=getBackups();
+  const lbl=document.getElementById('backup-meta-sub');
+  if(lbl)lbl.textContent=b.length?b.length+' snapshots · last: '+fmtTs(b[0].ts):'No backups yet';
+}
+function renderBackupList(){
+  const backups=getBackups();
+  document.getElementById('backup-count-lbl').textContent=backups.length+' snapshots stored';
+  document.getElementById('backupList').innerHTML=backups.map((b,i)=>`
+    <div class="backup-item">
+      <div class="bi-ts">${fmtTs(b.ts)}<span class="${b.type==='manual'?'bi-type bi-manual':'bi-type bi-auto'}">${b.type==='manual'?'MANUAL':'AUTO'}</span></div>
+      <div class="bi-stats">Yes: ${b.stats?.yes||0} · Lean: ${b.stats?.lean||0} · Unknown: ${b.stats?.unk||0} · Valid: ${b.stats?.valid||0}</div>
+      <div class="bi-actions">
+        <button class="save-btn" style="flex:1;padding:8px;font-size:12px;background:linear-gradient(135deg,#f7834f,#f5424e);" onclick="restoreBackup(${i})">↩ Restore</button>
+        <button class="save-btn" style="flex:1;padding:8px;font-size:12px;" onclick="deleteBackup(${i})">🗑 Delete</button>
+      </div>
+    </div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">No backups yet. Changes auto-save here.</div>';
+}
+function restoreBackup(idx){
+  if(!confirm('Restore this snapshot? Current data will be replaced.'))return;
+  const b=getBackups()[idx];if(!b)return;
+  createBackup('auto');
+  b.voters.forEach(sv=>{const v=voters.find(x=>x.id===sv.id);if(v)Object.assign(v,sv);});
+  activityLog=b.log||[];
+  persist();updateCharts();renderVoters();renderStreets();renderReminders();updateReminderBadge();
+  toast('✅ Restored to '+fmtTs(b.ts));
+}
+function deleteBackup(idx){const b=getBackups();b.splice(idx,1);saveBackups(b);renderBackupList();}
+function exportBackupFile(){
+  const data=JSON.stringify({exported:new Date().toISOString(),backups:getBackups()},null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='taqwa_backup_'+new Date().toISOString().slice(0,16).replace('T','_')+'.json';a.click();
+  toast('⬇ Backup downloaded');
+}
+function importBackupFromFile(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      const arr=data.backups||[data];
+      const merged=[...arr,...getBackups()].slice(0,MAX_BACKUPS);
+      saveBackups(merged);renderBackupList();
+      toast('✅ '+arr.length+' backup(s) imported');
+    }catch{toast('❌ Invalid backup file','#f5424e');}
+  };
+  reader.readAsText(file);input.value='';
+}
+
+// ── PIN / MODE ──
+// ── ACCESS / PIN SYSTEM ──
+// 3 levels: viewer (read-only), team (log+edit), admin (full)
+const PINS = { team:'1971', admin:'1978' };
+let accessLevel = 'viewer'; // default always viewer
+let pinBuffer = '', pinTarget = '';
+
+function applyMode(){
+  const btn = document.getElementById('modeBadge');
+  const body = document.body;
+  body.classList.remove('readonly','team-mode','admin-mode');
+  if(accessLevel==='viewer'){
+    body.classList.add('readonly');
+    btn.className='mode-btn viewer'; btn.textContent='👁';
+    btn.title='View Only - tap to change';
+  } else if(accessLevel==='team'){
+    body.classList.add('team-mode');
+    btn.className='mode-btn team'; btn.textContent='🌴';
+    btn.title='Team Member - tap to change';
+  } else {
+    body.classList.add('admin-mode');
+    btn.className='mode-btn admin'; btn.textContent='🔐';
+    btn.title='Admin - tap to change';
+  }
+}
+
+Object.defineProperty(window,'isReadOnly',{get:()=>accessLevel==='viewer',configurable:true});
+
+function showAccessScreen(){
+  backToChoose();
+  document.getElementById('pinOverlay').style.display='flex';
+}
+function openPin(){
+  backToChoose();
+  document.getElementById('pinOverlay').style.display='flex';
+}
+function closePinOverlay(){
+  document.getElementById('pinOverlay').style.display='none';
+  pinBuffer=''; updatePinDots();
+}
+function backToChoose(){
+  document.getElementById('pin-choose').style.display='block';
+  document.getElementById('pin-entry').style.display='none';
+  pinBuffer=''; updatePinDots();
+}
+function enterClear(){
+  accessLevel='viewer'; applyMode(); closePinOverlay();
+  toast('Viewing in read-only mode','#6b7a99');
+}
+function enterPin(target){
+  pinTarget=target; pinBuffer=''; updatePinDots();
+  document.getElementById('pin-choose').style.display='none';
+  document.getElementById('pin-entry').style.display='block';
+  const isTeam = target==='team';
+  document.getElementById('pin-entry-title').textContent = isTeam ? 'Taqwa Team Member' : 'Taqwa Admin';
+  document.getElementById('pin-entry-sub').textContent = isTeam
+    ? 'Enter your 4-digit team PIN to continue'
+    : 'Enter your 4-digit admin PIN to continue';
+  document.getElementById('pin-hint').textContent = '';
+}
+function pinKey(k){
+  if(pinBuffer.length>=4) return;
+  pinBuffer+=k; updatePinDots();
+  if(pinBuffer.length===4) setTimeout(checkPin,150);
+}
+function pinDel(){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); }
+function updatePinDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('pd'+i);
+    if(d) d.className='pd'+(i<pinBuffer.length?' on':'');
+  }
+}
+function checkPin(){
+  if(pinBuffer===PINS[pinTarget]){
+    accessLevel=pinTarget; applyMode(); closePinOverlay();
+    const labels={team:'Team Member access granted',admin:'Admin access granted'};
+    const colours={team:'#22d3a0',admin:'#4f8ef7'};
+    toast(labels[pinTarget], colours[pinTarget]);
+    if(pinTarget==='admin') renderBackupList();
+  } else {
+    for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.className='pd on err';}
+    setTimeout(()=>{
+      pinBuffer=''; updatePinDots();
+      document.getElementById('pin-hint').textContent='Incorrect PIN - try again';
+    },700);
+  }
+}
+
+// ── POPULATE PRINT STREET SELECT ──
+function populatePrintStreets(){
+  const streets=[...new Set(voters.map(v=>v.street))].sort();
+  ['print-street-sel'].forEach(id=>{
+    const el=document.getElementById(id);
+    streets.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;el.appendChild(o);});
+  });
+}
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  // always start read-only — show access screen
+  accessLevel='viewer';
+  applyMode();
+  applyTheme(currentTheme);
+  updateCountdown();setInterval(updateCountdown,1000);
+  initCharts();updateCharts();
+  renderVoters();
+  renderReminders();updateReminderBadge();
+  populatePrintStreets();
+  updateBackupMeta();
+  mobLoadSheetsCfg();
+  // Show access screen immediately on every load
+  setTimeout(showAccessScreen, 400);
+  // handle hardware back on Android
+  window.addEventListener('popstate',()=>{
+    if(document.getElementById('voterModal').classList.contains('open')){closeVoterModal();}
+  });
+});
+// ── GOOGLE SHEETS SYNC (MOBILE) ──
+const MOB_SHEETS_KEY = 'taqwa_sheets_mob_v1';
+let mobSheetsCfg = { url: '', tab: 'Voters' };
+let mobAutoSyncTimer = null;
+
+function mobLoadSheetsCfg() {
+  try {
+    const c = JSON.parse(localStorage.getItem(MOB_SHEETS_KEY) || '{}');
+    if (c.url) mobSheetsCfg.url = c.url;
+    if (c.tab) mobSheetsCfg.tab = c.tab;
+  } catch(e) {}
+  const urlEl = document.getElementById('mob-sheets-url');
+  const tabEl = document.getElementById('mob-sheets-tab');
+  if (urlEl) urlEl.value = mobSheetsCfg.url || '';
+  if (tabEl) tabEl.value = mobSheetsCfg.tab || 'Voters';
+  mobUpdateSheetsStatus(mobSheetsCfg.url ? 'connected' : 'off');
+  if (mobSheetsCfg.url) mobStartAutoSync();
+}
+
+function mobSheetsUrlChanged() {
+  const url = document.getElementById('mob-sheets-url').value.trim();
+  mobUpdateSheetsStatus(url ? 'connected' : 'off');
+}
+
+function mobSaveSheetsCfg() {
+  const url = document.getElementById('mob-sheets-url').value.trim();
+  const tab = document.getElementById('mob-sheets-tab').value.trim() || 'Voters';
+  mobSheetsCfg = { url, tab };
+  localStorage.setItem(MOB_SHEETS_KEY, JSON.stringify(mobSheetsCfg));
+  mobUpdateSheetsStatus(url ? 'connected' : 'off');
+  toast(url ? '✓ Sheets config saved' : '⚠ No URL entered', url ? '#22d3a0' : '#f5c842');
+  if (url) mobStartAutoSync();
+}
+
+function mobUpdateSheetsStatus(state, msg) {
+  const dot = document.getElementById('sheets-dot');
+  const txt = document.getElementById('sheets-status-txt');
+  const row = document.getElementById('sheets-status-row');
+  if (!dot) return;
+  if (state === 'connected') {
+    dot.style.background = '#22d3a0';
+    dot.style.animation = '';
+    row.style.color = '#22d3a0';
+    txt.textContent = msg || 'Connected — ready to push / pull';
+  } else if (state === 'syncing') {
+    dot.style.background = '#4f8ef7';
+    dot.style.animation = 'pulse 1s infinite';
+    row.style.color = '#4f8ef7';
+    txt.textContent = msg || 'Syncing…';
+  } else if (state === 'error') {
+    dot.style.background = '#f5424e';
+    dot.style.animation = '';
+    row.style.color = '#f5424e';
+    txt.textContent = msg || 'Error — check URL';
+  } else {
+    dot.style.background = 'var(--muted)';
+    dot.style.animation = '';
+    row.style.color = 'var(--muted)';
+    txt.textContent = 'Not connected — paste your Web App URL below';
+  }
+}
+
+function mobAddSyncLog(msg, type) {
+  const el = document.getElementById('mob-sync-log');
+  if (!el) return;
+  el.style.display = 'block';
+  const color = type === 'ok' ? '#22d3a0' : type === 'err' ? '#f5424e' : '#4f8ef7';
+  const time = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  el.innerHTML = `<div style="color:${color};margin-bottom:3px;">[${time}] ${msg}</div>` + el.innerHTML;
+}
+
+async function mobPushToSheets() {
+  const url = mobSheetsCfg.url;
+  if (!url) { toast('Paste the Web App URL first and tap Save Config', '#f5c842'); return; }
+  mobUpdateSheetsStatus('syncing', 'Pushing ' + voters.length + ' records…');
+  mobAddSyncLog('Pushing ' + voters.length + ' voter records…', 'info');
+  const rows = voters.map(v => ({
+    ID: v.id, Name: v.name, Street: v.street, Address: v.address,
+    Support: v.support, Turnout: v.turnout, Validity: v.validity,
+    Phone: v.phone || '', Contacted: v.contacted || '',
+    Canvasser: v.canvasser || '', Notes: v.notes || ''
+  }));
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ method: 'push', rows }),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      mobUpdateSheetsStatus('connected', 'Last push: ' + new Date().toLocaleTimeString('en-GB'));
+      mobAddSyncLog('✓ Pushed ' + data.written + ' rows successfully', 'ok');
+      toast('✓ ' + data.written + ' voters pushed to Google Sheets', '#22d3a0');
+    } else {
+      mobUpdateSheetsStatus('error', 'Push failed');
+      mobAddSyncLog('✗ ' + (data.error || 'Push failed'), 'err');
+      toast('Push failed — ' + (data.error || 'check connection'), '#f5424e');
+    }
+  } catch(e) {
+    mobUpdateSheetsStatus('error', 'Connection failed');
+    mobAddSyncLog('✗ ' + e.message + ' — Check URL is correct', 'err');
+    toast('Cannot reach Google — check the URL', '#f5424e');
+  }
+}
+
+async function mobPullFromSheets() {
+  const url = mobSheetsCfg.url;
+  if (!url) { toast('Paste the Web App URL first and tap Save Config', '#f5c842'); return; }
+  mobUpdateSheetsStatus('syncing', 'Pulling latest data…');
+  mobAddSyncLog('Pulling from Google Sheets…', 'info');
+  try {
+    const resp = await fetch(url + '?method=pull');
+    const data = await resp.json();
+    if (data.ok && data.rows && data.rows.length) {
+      let updated = 0;
+      data.rows.forEach(r => {
+        const v = voters.find(x => x.id == r.ID);
+        if (v) {
+          if (r.Support)    v.support    = r.Support;
+          if (r.Turnout)    v.turnout    = r.Turnout;
+          if (r.Validity)   v.validity   = r.Validity;
+          if (r.Phone)      v.phone      = r.Phone;
+          if (r.Canvasser)  v.canvasser  = r.Canvasser;
+          if (r.Contacted)  v.contacted  = r.Contacted;
+          if (r.Notes)      v.notes      = r.Notes;
+          updated++;
+        }
+      });
+      persist(); updateCharts(); renderVoters(); renderStreets(); renderReminders(); updateReminderBadge();
+      mobUpdateSheetsStatus('connected', 'Last pull: ' + new Date().toLocaleTimeString('en-GB'));
+      mobAddSyncLog('✓ Pulled ' + updated + ' records from Sheets', 'ok');
+      toast('✓ ' + updated + ' voters updated from Google Sheets', '#22d3a0');
+    } else {
+      mobUpdateSheetsStatus('error', 'Pull failed');
+      mobAddSyncLog('✗ ' + (data.error || 'No data returned'), 'err');
+      toast('Pull failed — ' + (data.error || 'no data'), '#f5424e');
+    }
+  } catch(e) {
+    mobUpdateSheetsStatus('error', 'Connection failed');
+    mobAddSyncLog('✗ ' + e.message, 'err');
+    toast('Cannot reach Google — check the URL', '#f5424e');
+  }
+}
+
+function mobStartAutoSync() {
+  if (mobAutoSyncTimer) clearInterval(mobAutoSyncTimer);
+  if (!mobSheetsCfg.url) return;
+  mobAutoSyncTimer = setInterval(() => {
+    if (mobSheetsCfg.url) mobPullFromSheets();
+  }, 60000);
+}
+
+// ── THEME SWITCHER ──
+const THEMES = {
+  midnight: {
+    name:'Midnight Command',
+    desc:'Deep navy · Electric blue',
+    bg:'#0a0d14', surface:'#111520', card:'#161c2e',
+    border:'#1e2840', text:'#e8ecf4', muted:'#6b7a99',
+    accent:'#4f8ef7', green:'#22d3a0', yellow:'#f5c842',
+    headerBg:'linear-gradient(135deg,#0c1422,#111a2e)',
+    navBg:'linear-gradient(0deg,#0c1220,#111828)',
+    logoBg:'linear-gradient(135deg,#4f8ef7,#22d3a0)',
+    titleBg:'linear-gradient(90deg,#4f8ef7,#22d3a0)',
+    kv1:'#4f8ef7', kv2:'#22d3a0', kv3:'#f5c842',
+    attr:null
+  },
+  emerald: {
+    name:'Emerald Field',
+    desc:'Forest green · Fresh',
+    bg:'#0d1a12', surface:'#071209', card:'#112118',
+    border:'#1e3a28', text:'#d4f0dc', muted:'#4d7a5e',
+    accent:'#2dba6e', green:'#2dba6e', yellow:'#f5c842',
+    headerBg:'linear-gradient(135deg,#071209,#0d1a12)',
+    navBg:'linear-gradient(0deg,#050e07,#071209)',
+    logoBg:'linear-gradient(135deg,#2dba6e,#83e6a8)',
+    titleBg:'linear-gradient(90deg,#2dba6e,#83e6a8)',
+    kv1:'#2dba6e', kv2:'#83e6a8', kv3:'#f5c842',
+    attr:'emerald'
+  },
+  sunrise: {
+    name:'Sunrise',
+    desc:'Light mode · Warm amber',
+    bg:'#fffaf3', surface:'#fff', card:'#fff',
+    border:'#fde8c8', text:'#3d2006', muted:'#c47820',
+    accent:'#e8631c', green:'#16a34a', yellow:'#d97706',
+    headerBg:'linear-gradient(135deg,#fff,#fff7ed)',
+    navBg:'linear-gradient(0deg,#fff,#fff7ed)',
+    logoBg:'linear-gradient(135deg,#f7834f,#f5c842)',
+    titleBg:'linear-gradient(90deg,#e8631c,#f5a623)',
+    kv1:'#e8631c', kv2:'#16a34a', kv3:'#d97706',
+    attr:'sunrise'
+  },
+  purple: {
+    name:'Royal Purple',
+    desc:'Deep purple · Bold',
+    bg:'#0e0816', surface:'#0a0614', card:'#1a1030',
+    border:'#2d1a50', text:'#e8dcf8', muted:'#6b4a99',
+    accent:'#9b6cf7', green:'#22d3a0', yellow:'#f5c842',
+    headerBg:'linear-gradient(135deg,#0e0816,#1a1030)',
+    navBg:'linear-gradient(0deg,#080410,#0e0816)',
+    logoBg:'linear-gradient(135deg,#9b6cf7,#e040fb)',
+    titleBg:'linear-gradient(90deg,#9b6cf7,#e040fb)',
+    kv1:'#9b6cf7', kv2:'#22d3a0', kv3:'#f5c842',
+    attr:'purple'
+  }
+};
+
+const THEME_KEY = 'taqwa_theme_v1';
+let currentTheme = localStorage.getItem(THEME_KEY) || 'midnight';
+
+function applyTheme(id) {
+  const t = THEMES[id];
+  if (!t) return;
+  currentTheme = id;
+  localStorage.setItem(THEME_KEY, id);
+  const root = document.documentElement;
+  if (t.attr) {
+    root.setAttribute('data-theme', t.attr);
+  } else {
+    root.removeAttribute('data-theme');
+  }
+  // Re-render theme grid to show active state
+  renderThemeGrid();
+  // Update charts if they exist (re-render backgrounds)
+  updateCharts();
+  toast('🎨 Theme changed to ' + t.name);
+}
+
+function renderThemeGrid() {
+  const grid = document.getElementById('theme-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.entries(THEMES).map(([id, t]) => {
+    const isActive = id === currentTheme;
+    const isDark = id !== 'sunrise';
+    const textCol = isDark ? t.text : t.text;
+    const mutedCol = isDark ? t.muted : t.muted;
+    return `
+    <div class="theme-card${isActive ? ' active-theme' : ''}" onclick="applyTheme('${id}')">
+      <div class="tc-preview" style="background:${t.bg}">
+        <div class="tc-header" style="background:${t.headerBg};border-bottom:1px solid ${t.border}">
+          <div class="tc-dot" style="background:${t.logoBg}">🌴</div>
+          <span class="tc-title-bar" style="background:${t.titleBg}">TAQWA</span>
+        </div>
+        <div class="tc-body">
+          <div class="tc-kpi-row">
+            <div class="tc-kpi" style="background:${t.card};border-color:${t.border}">
+              <div class="tc-kl" style="color:${mutedCol}">Target</div>
+              <div class="tc-kv" style="color:${t.kv1}">171</div>
+            </div>
+            <div class="tc-kpi" style="background:${t.card};border-color:${t.border}">
+              <div class="tc-kl" style="color:${mutedCol}">Score</div>
+              <div class="tc-kv" style="color:${t.kv2}">15</div>
+            </div>
+            <div class="tc-kpi" style="background:${t.card};border-color:${t.border}">
+              <div class="tc-kl" style="color:${mutedCol}">Gap</div>
+              <div class="tc-kv" style="color:${t.kv3}">156</div>
+            </div>
+          </div>
+          <div class="tc-bar" style="background:${t.accent};opacity:.3;width:100%"></div>
+          <div class="tc-bar" style="background:${t.titleBg};width:45%"></div>
+        </div>
+        <div class="tc-nav" style="background:${t.navBg};border-top-color:${t.border}">
+          <div class="tc-nav-dot on" style="color:${t.accent}">📊</div>
+          <div class="tc-nav-dot" style="color:${mutedCol}">🗳</div>
+          <div class="tc-nav-dot" style="color:${mutedCol}">🗺</div>
+          <div class="tc-nav-dot" style="color:${mutedCol}">📋</div>
+          <div class="tc-nav-dot" style="color:${mutedCol}">⋯</div>
+        </div>
+      </div>
+      <div class="tc-footer" style="background:${t.card};border-top:1px solid ${t.border}">
+        <div>
+          <div class="tc-name" style="color:${textCol}">${t.name}</div>
+          <div style="font-size:10px;color:${mutedCol}">${t.desc}</div>
+        </div>
+        <div class="tc-check" style="border-color:${isActive ? t.accent : t.border};background:${isActive ? t.accent : 'transparent'};color:${isActive ? '#fff' : 'transparent'}">✓</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+</script></body></html>
