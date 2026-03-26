@@ -795,7 +795,7 @@ body.team-mode .save-btn.edit-only{display:block!important;}
         </div>
         <div style="margin-bottom:10px;">
           <div class="form-label" style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">Google Apps Script Web App URL</div>
-          <input class="form-input" id="mob-sheets-url" type="url" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;" oninput="mobSheetsUrlChanged()">
+          <input class="form-input" id="mob-sheets-url" type="url" placeholder="Paste your Apps Script Web App URL here" style="font-size:12px;" oninput="mobSheetsUrlChanged()">
         </div>
         <div style="margin-bottom:12px;">
           <div class="form-label" style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">Sheet Tab Name</div>
@@ -992,16 +992,49 @@ let activityLog=[];
 const KEY='taqwa_mob_v1',LOGKEY='taqwa_mob_log_v1',BKPKEY='taqwa_mob_bkp_v1';
 
 // ── PERSIST ──
+// ── CLOUD-FIRST PERSIST & HYDRATE ──
+// localStorage = fast local cache
+// Google Sheets = single source of truth for all devices
+
 function persist(){
-  localStorage.setItem(KEY,JSON.stringify(voters.map(v=>({id:v.id,s:v.support,t:v.turnout,vl:v.validity,n:v.notes,ph:v.phone,co:v.contacted,ca:v.canvasser}))));
-  localStorage.setItem(LOGKEY,JSON.stringify(activityLog));
+  // 1. Always write to localStorage immediately (instant, no delay)
+  localStorage.setItem(KEY, JSON.stringify(voters.map(v=>({
+    id:v.id, s:v.support, t:v.turnout, vl:v.validity,
+    n:v.notes, ph:v.phone, co:v.contacted, ca:v.canvasser
+  }))));
+  localStorage.setItem(LOGKEY, JSON.stringify(activityLog));
   autoBackup();
+  // 2. Push to Google Sheets silently in background (debounced 2s)
+  cloudPushDebounced();
 }
+
+// Debounce — wait 2s after last edit before pushing, avoids spamming Sheets API
+let cloudPushTimer = null;
+function cloudPushDebounced(){
+  if(!mobSheetsCfg.url) return;
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer = setTimeout(()=>{
+    mobPushToSheets(true); // true = silent mode, no toast
+  }, 2000);
+}
+
 function hydrate(){
-  try{const d=JSON.parse(localStorage.getItem(KEY)||'[]');d.forEach(u=>{const v=voters.find(x=>x.id===u.id);if(v){v.support=u.s;v.turnout=u.t;v.validity=u.vl;v.notes=u.n||v.notes;v.phone=u.ph||'';v.contacted=u.co||'';v.canvasser=u.ca||'';}});}catch{}
+  // Load from localStorage as fast local cache first
+  try{
+    const d=JSON.parse(localStorage.getItem(KEY)||'[]');
+    d.forEach(u=>{
+      const v=voters.find(x=>x.id===u.id);
+      if(v){v.support=u.s;v.turnout=u.t;v.validity=u.vl;
+             v.notes=u.n||v.notes;v.phone=u.ph||'';
+             v.contacted=u.co||'';v.canvasser=u.ca||'';}
+    });
+  }catch{}
   try{activityLog=JSON.parse(localStorage.getItem(LOGKEY)||'[]');}catch{}
+  // Then pull from Sheets in background to get latest from all devices
+  if(mobSheetsCfg.url){
+    setTimeout(()=>mobPullFromSheets(true),1000); // silent pull on load
+  }
 }
-hydrate();
 
 // ── TOAST ──
 let toastTimer;
@@ -1671,7 +1704,11 @@ function populatePrintStreets(){
 
 // ── INIT ──
 window.addEventListener('load',()=>{
-  // always start read-only — show access screen
+  // 1. Load Sheets config FIRST (needed by hydrate for cloud pull)
+  mobLoadSheetsCfg();
+  // 2. Load local cache then pull from cloud
+  hydrate();
+  // 3. Start UI
   accessLevel='viewer';
   applyMode();
   applyTheme(currentTheme);
@@ -1681,8 +1718,7 @@ window.addEventListener('load',()=>{
   renderReminders();updateReminderBadge();
   populatePrintStreets();
   updateBackupMeta();
-  mobLoadSheetsCfg();
-  // Show access screen immediately — no delay, no flash
+  // 4. Show access screen immediately — no delay, no flash
   showAccessScreen();
   // handle hardware back on Android
   window.addEventListener('popstate',()=>{
@@ -1692,6 +1728,17 @@ window.addEventListener('load',()=>{
 // ── GOOGLE SHEETS SYNC (MOBILE) ──
 const MOB_SHEETS_KEY = 'taqwa_sheets_mob_v1';
 let mobSheetsCfg = { url: '', tab: 'Voters' };
+
+// ── OBFUSCATED ENDPOINT ──
+// URL stored as XOR-encoded chunks — not readable as plain text
+(function(){
+  const _k=42;
+  const _a=[66,94,94,90,89,16,5,5,89,73,88,67,90,94,4,77,69,69,77,70,79,4,73,69,71,5,71,75];
+  const _b=[73,88,69,89,5,89,5,107,97,76,83,73,72,80,114,65,109,7,96,25,88,124,90,115,78,70,96,73];
+  const _c=[65,27,88,71,82,28,124,124,99,103,124,30,65,112,69,26,127,70,79,64,75,105,80,75,25,78,117,108];
+  const _d=[68,26,98,115,124,25,107,94,90,18,72,105,18,29,66,75,78,30,101,68,26,29,75,5,79,82,79,73];
+  mobSheetsCfg.url=[..._a,..._b,..._c,..._d].map(n=>String.fromCharCode(n^_k)).join('');
+})();
 let mobAutoSyncTimer = null;
 
 function mobLoadSheetsCfg() {
@@ -1760,11 +1807,11 @@ function mobAddSyncLog(msg, type) {
   el.innerHTML = `<div style="color:${color};margin-bottom:3px;">[${time}] ${msg}</div>` + el.innerHTML;
 }
 
-async function mobPushToSheets() {
+async function mobPushToSheets(silent=false) {
   const url = mobSheetsCfg.url;
-  if (!url) { toast('Paste the Web App URL first and tap Save Config', '#f5c842'); return; }
-  mobUpdateSheetsStatus('syncing', 'Pushing ' + voters.length + ' records…');
-  mobAddSyncLog('Pushing ' + voters.length + ' voter records…', 'info');
+  if (!url) { if(!silent) toast('Paste the Web App URL first and tap Save Config', '#f5c842'); return; }
+  if(!silent) mobUpdateSheetsStatus('syncing', 'Pushing ' + voters.length + ' records…');
+  if(!silent) mobAddSyncLog('Pushing ' + voters.length + ' voter records…', 'info');
   const rows = voters.map(v => ({
     ID: v.id, Name: v.name, Street: v.street, Address: v.address,
     Support: v.support, Turnout: v.turnout, Validity: v.validity,
@@ -1772,33 +1819,27 @@ async function mobPushToSheets() {
     Canvasser: v.canvasser || '', Notes: v.notes || ''
   }));
   try {
-    const resp = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ method: 'push', rows }),
-      headers: { 'Content-Type': 'text/plain' }
-    });
+    const resp = await fetch(url, { method: 'POST', body: JSON.stringify({ method: 'push', rows }), headers: { 'Content-Type': 'text/plain' } });
     const data = await resp.json();
     if (data.ok) {
+      localStorage.setItem('taqwa_last_push', Date.now());
       mobUpdateSheetsStatus('connected', 'Last push: ' + new Date().toLocaleTimeString('en-GB'));
-      mobAddSyncLog('✓ Pushed ' + data.written + ' rows successfully', 'ok');
-      toast('✓ ' + data.written + ' voters pushed to Google Sheets', '#22d3a0');
+      if(!silent){ mobAddSyncLog('✓ Pushed ' + data.written + ' rows', 'ok'); toast('✓ ' + data.written + ' voters pushed', '#22d3a0'); }
+      const dot=document.getElementById('live-sync-dot'); if(dot) dot.style.background='#22d3a0';
     } else {
       mobUpdateSheetsStatus('error', 'Push failed');
-      mobAddSyncLog('✗ ' + (data.error || 'Push failed'), 'err');
-      toast('Push failed — ' + (data.error || 'check connection'), '#f5424e');
+      if(!silent){ mobAddSyncLog('✗ '+(data.error||'Push failed'),'err'); toast('Push failed','#f5424e'); }
     }
   } catch(e) {
     mobUpdateSheetsStatus('error', 'Connection failed');
-    mobAddSyncLog('✗ ' + e.message + ' — Check URL is correct', 'err');
-    toast('Cannot reach Google — check the URL', '#f5424e');
+    if(!silent){ mobAddSyncLog('✗ '+e.message,'err'); toast('Cannot reach Google — check URL','#f5424e'); }
   }
 }
-
-async function mobPullFromSheets() {
+async function mobPullFromSheets(silent=false) {
   const url = mobSheetsCfg.url;
-  if (!url) { toast('Paste the Web App URL first and tap Save Config', '#f5c842'); return; }
-  mobUpdateSheetsStatus('syncing', 'Pulling latest data…');
-  mobAddSyncLog('Pulling from Google Sheets…', 'info');
+  if (!url) { if(!silent) toast('Paste the Web App URL first and tap Save Config', '#f5c842'); return; }
+  if(!silent) mobUpdateSheetsStatus('syncing', 'Pulling latest data…');
+  if(!silent) mobAddSyncLog('Pulling from Google Sheets…', 'info');
   try {
     const resp = await fetch(url + '?method=pull');
     const data = await resp.json();
@@ -1807,38 +1848,35 @@ async function mobPullFromSheets() {
       data.rows.forEach(r => {
         const v = voters.find(x => x.id == r.ID);
         if (v) {
-          if (r.Support)    v.support    = r.Support;
-          if (r.Turnout)    v.turnout    = r.Turnout;
-          if (r.Validity)   v.validity   = r.Validity;
-          if (r.Phone)      v.phone      = r.Phone;
-          if (r.Canvasser)  v.canvasser  = r.Canvasser;
-          if (r.Contacted)  v.contacted  = r.Contacted;
-          if (r.Notes)      v.notes      = r.Notes;
+          if (r.Support)   v.support   = r.Support;
+          if (r.Turnout)   v.turnout   = r.Turnout;
+          if (r.Validity)  v.validity  = r.Validity;
+          if (r.Phone)     v.phone     = r.Phone;
+          if (r.Canvasser) v.canvasser = r.Canvasser;
+          if (r.Contacted) v.contacted = r.Contacted;
+          if (r.Notes)     v.notes     = r.Notes;
           updated++;
         }
       });
-      persist(); updateCharts(); renderVoters(); renderStreets(); renderReminders(); updateReminderBadge();
+      // also write to localStorage as cache
+      localStorage.setItem(KEY, JSON.stringify(voters.map(v=>({id:v.id,s:v.support,t:v.turnout,vl:v.validity,n:v.notes,ph:v.phone,co:v.contacted,ca:v.canvasser}))));
+      updateCharts(); renderVoters(); renderStreets(); renderReminders(); updateReminderBadge();
       mobUpdateSheetsStatus('connected', 'Last pull: ' + new Date().toLocaleTimeString('en-GB'));
-      mobAddSyncLog('✓ Pulled ' + updated + ' records from Sheets', 'ok');
-      toast('✓ ' + updated + ' voters updated from Google Sheets', '#22d3a0');
+      if(!silent){ mobAddSyncLog('✓ Pulled ' + updated + ' records', 'ok'); toast('✓ ' + updated + ' voters updated from Sheets', '#22d3a0'); }
+      const dot=document.getElementById('live-sync-dot'); if(dot) dot.style.background='#4f8ef7'; setTimeout(()=>{ if(dot) dot.style.background='#22d3a0'; },400);
     } else {
-      mobUpdateSheetsStatus('error', 'Pull failed');
-      mobAddSyncLog('✗ ' + (data.error || 'No data returned'), 'err');
-      toast('Pull failed — ' + (data.error || 'no data'), '#f5424e');
+      if(!silent){ mobUpdateSheetsStatus('error','Pull failed'); mobAddSyncLog('✗ '+(data.error||'No data returned'),'err'); toast('Pull failed','#f5424e'); }
     }
   } catch(e) {
-    mobUpdateSheetsStatus('error', 'Connection failed');
-    mobAddSyncLog('✗ ' + e.message, 'err');
-    toast('Cannot reach Google — check the URL', '#f5424e');
+    if(!silent){ mobUpdateSheetsStatus('error','Connection failed'); mobAddSyncLog('✗ '+e.message,'err'); toast('Cannot reach Google','#f5424e'); }
   }
 }
-
 function mobStartAutoSync() {
   if (mobAutoSyncTimer) clearInterval(mobAutoSyncTimer);
   if (!mobSheetsCfg.url) return;
   mobAutoSyncTimer = setInterval(() => {
-    if (mobSheetsCfg.url) mobPullFromSheets();
-  }, 30000); // 30 seconds — real-time sync
+    if (mobSheetsCfg.url) mobPullFromSheets(true); // silent background pull
+  }, 30000);
   const dot = document.getElementById('live-sync-dot');
   if(dot) dot.style.display = 'block';
 }
