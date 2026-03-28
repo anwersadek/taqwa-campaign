@@ -12,13 +12,28 @@
 <style>
 /* ══════ TOKENS ══════ */
 :root{
+  --bg:#141824;--surface:#0f1320;--card:#1a2035;--card2:#1e2540;
+  --border:#252d3f;--border2:#2e3850;
+  --text:#c8d0e0;--text2:#8a96b0;--muted:#4a5470;
+  --accent:#2d6be4;--green:#3a9e7a;--yellow:#c9a840;
+  --red:#c44a50;--purple:#7a60d4;--orange:#c47840;--cyan:#3a9ecc;
+  --nav-h:68px;--header-h:60px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --header-bg:#0f1320;
+  --header-border:#252d3f;
+  --nav-bg:#0f1320;
+  --nav-border:#252d3f;
+  --logo-gradient:linear-gradient(135deg,#2d6be4,#3a9e7a);
+  --title-gradient:linear-gradient(90deg,#5a8fd4,#a0b8d0);
+  --kpi-progress:linear-gradient(90deg,#2d6be4,#3a9e7a);
+}
+/* ── THEME: Midnight Command (original) ── */
+[data-theme="midnight"]{
   --bg:#0a0d14;--surface:#111520;--card:#161c2e;--card2:#1a2136;
   --border:#1e2840;--border2:#263050;
   --text:#e8ecf4;--text2:#b0bcd4;--muted:#6b7a99;
   --accent:#4f8ef7;--green:#22d3a0;--yellow:#f5c842;
   --red:#f5424e;--purple:#9b6cf7;--orange:#f7834f;--cyan:#42d4f5;
-  --nav-h:68px;--header-h:60px;
-  --safe-bottom:env(safe-area-inset-bottom,0px);
   --header-bg:linear-gradient(135deg,#0c1422,#111a2e);
   --header-border:#1e2840;
   --nav-bg:linear-gradient(0deg,#0c1220,#111828);
@@ -72,6 +87,7 @@
   --title-gradient:linear-gradient(90deg,#9b6cf7,#e040fb);
   --kpi-progress:linear-gradient(90deg,#9b6cf7,#e040fb);
 }
+
 /* ══════ RESET ══════ */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
@@ -213,26 +229,29 @@ body.team-mode .save-btn.edit-only{display:block!important;}
 .voter-card:active{transform:scale(.98);background:var(--card2);}
 .voter-card.dup{opacity:.65;border-left:3px solid var(--purple);}
 .voter-card.inv{opacity:.55;border-left:3px solid var(--red);}
-.vc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;}
-.vc-name{font-weight:600;font-size:16px;line-height:1.3;flex:1;}
+.vc-name{font-weight:600;font-size:16px;line-height:1.3;}
 .vc-id{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);margin-top:2px;}
-.vc-badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
+.vc-badges{display:flex;gap:4px;flex-wrap:wrap;}
 .mini-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;}
 .mb-dup{background:#1a1630;color:#9b6cf7;border:1px solid #9b6cf7;}
 .mb-inv{background:#2e0d0d;color:#f5424e;border:1px solid #f5424e;}
 .mb-oa{background:#1e2228;color:#6b7a99;border:1px solid #555;}
 .mb-chk{background:#2e1e0d;color:#f7834f;border:1px solid #f7834f;}
-.vc-addr{font-size:13px;color:var(--text2);margin-bottom:8px;line-height:1.5;}
-.vc-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.vc-addr{font-size:13px;color:var(--text2);margin-bottom:6px;line-height:1.5;}
 .vc-pill{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;}
-.pill-yes{background:#0d2e22;color:#22d3a0;border:1px solid #22d3a0;}
-.pill-lean{background:#0d2028;color:#4f8ef7;border:1px solid #4f8ef7;}
-.pill-no{background:#2e0d0d;color:#f5424e;border:1px solid #f5424e;}
-.pill-unk{background:#1e2228;color:#6b7a99;border:1px solid #2e3850;}
-.pill-voted{background:#0d2e22;color:#22d3a0;border:1px solid #22d3a0;}
-.pill-remind{background:#2e1e0d;color:#f5c842;border:1px solid #f5c842;}
-.pill-not{background:#2e0d0d;color:#f5424e;border:1px solid #f5424e;}
-.vc-canvasser{font-size:10px;color:var(--accent);margin-top:4px;}
+.vc-canvasser{font-size:10px;color:var(--accent);margin-top:3px;}
+/* ── Design E voter card ── */
+.voter-card{display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .15s;}
+.voter-card:active{background:var(--card2);transform:scale(.98);}
+.voter-card.dup{opacity:.65;border-color:var(--purple);}
+.voter-card.inv{opacity:.55;border-color:var(--red);}
+.vc-left{flex:1;padding:12px 14px;min-width:0;}
+.vc-right{width:82px;flex-shrink:0;display:flex;flex-direction:column;border-left:1px solid var(--border);}
+.vc-sup{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 5px;}
+.vc-sup-icon{font-size:20px;line-height:1;}
+.vc-sup-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:center;line-height:1.3;}
+.vc-turn{border-top:1px solid var(--border);padding:7px 4px;text-align:center;}
+.vc-turn-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
 .voter-count-bar{text-align:center;padding:10px;font-size:11px;color:var(--muted);}
 .load-more{display:block;width:100%;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;text-align:center;margin-top:8px;}
 
@@ -1383,6 +1402,41 @@ function supportPillClass(s){
 }
 function turnoutPillClass(t){return t==='Voted'?'vc-pill pill-voted':t==='Need Reminder'?'vc-pill pill-remind':t==='Not Voted'?'vc-pill pill-not':'vc-pill pill-unk';}
 
+// ── Design E voter card helpers ──
+function supIcon(s){
+  if(s==='Yes')return'✅';
+  if(s==='Lean Positive')return'🔵';
+  if(s==='Lean Negative')return'🟠';
+  if(s==='No')return'❌';
+  return'⬜';
+}
+function supColour(s){
+  if(s==='Yes')return'var(--green)';
+  if(s==='Lean Positive')return'var(--accent)';
+  if(s==='Lean Negative')return'var(--orange)';
+  if(s==='No')return'var(--red)';
+  return'var(--muted)';
+}
+function supPanelBg(s){
+  if(s==='Yes')return'rgba(58,158,122,.08)';
+  if(s==='Lean Positive')return'rgba(45,107,228,.08)';
+  if(s==='Lean Negative')return'rgba(196,120,64,.08)';
+  if(s==='No')return'rgba(196,74,80,.08)';
+  return'rgba(74,84,112,.05)';
+}
+function turnColour(t){
+  if(t==='Voted')return'var(--green)';
+  if(t==='Need Reminder')return'var(--yellow)';
+  if(t==='Not Voted')return'var(--red)';
+  return'var(--muted)';
+}
+function turnPanelBg(t){
+  if(t==='Voted')return'rgba(58,158,122,.12)';
+  if(t==='Need Reminder')return'rgba(201,168,64,.1)';
+  if(t==='Not Voted')return'rgba(196,74,80,.1)';
+  return'transparent';
+}
+
 function renderVoters(){
   const list=getFilteredVoters();
   filteredVoters=list;
@@ -1394,15 +1448,23 @@ function renderVoters(){
     const rc=v.validity==='Duplicate'?'dup':v.validity==='Invalid'||v.validity==='Out of Area'?'inv':'';
     const badge=v.validity==='Duplicate'?'<span class="mini-badge mb-dup">DUPE</span>':v.validity==='Out of Area'?'<span class="mini-badge mb-oa">OOA</span>':v.validity==='Invalid'?'<span class="mini-badge mb-inv">INV</span>':v.validity==='Needs Check'?'<span class="mini-badge mb-chk">CHK</span>':'';
     return`<div class="voter-card ${rc}" onclick="openVoterModal(${v.id})">
-      <div class="vc-top">
-        <div><div class="vc-name">${v.name}</div><div class="vc-id">#${v.id} · ${v.street}</div></div>
-        <div class="vc-badges">${badge}</div>
+      <div class="vc-left">
+        <div style="font-family:'JetBrains Mono';font-size:11px;font-weight:700;color:var(--accent);background:rgba(45,107,228,.12);border:1px solid rgba(45,107,228,.25);border-radius:5px;padding:2px 6px;display:inline-block;margin-bottom:4px;">#${v.id}</div>
+        <div class="vc-name">${v.name}</div>
+        ${badge?`<div class="vc-badges" style="margin-top:4px;">${badge}</div>`:''}
+        <div class="vc-addr" style="margin-top:5px;">${v.address}</div>
+        ${v.phone?`<a href="tel:${v.phone}" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;">Mobile</span><span style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;color:var(--green);">${v.phone}</span></a>`:''}
+        ${v.canvasser?`<div class="vc-canvasser">👤 ${v.canvasser}</div>`:''}
+        ${v.needsLift?`<div style="font-size:10px;color:var(--orange);margin-top:2px;">🚗 Needs a lift</div>`:''}
       </div>
-      <div class="vc-addr">${v.address}</div>
-      <div class="vc-pills">
-        <span class="${supportPillClass(v.support)}">${v.support==='Lean Positive'?'Lean+':v.support}</span>
-        <span class="${turnoutPillClass(v.turnout)}">${v.turnout==='Need Reminder'?'Reminder':v.turnout}</span>
-        ${v.canvasser?`<span class="vc-pill" style="background:#0d2028;color:#4f8ef7;border:1px solid #4f8ef7">👤 ${v.canvasser}</span>`:''}
+      <div class="vc-right">
+        <div class="vc-sup" style="background:${supPanelBg(v.support)};">
+          <div class="vc-sup-icon">${supIcon(v.support)}</div>
+          <div class="vc-sup-lbl" style="color:${supColour(v.support)};">${v.support==='Lean Positive'?'Lean+':v.support==='Lean Negative'?'Lean-':v.support}</div>
+        </div>
+        <div class="vc-turn" style="background:${turnPanelBg(v.turnout)};">
+          <div class="vc-turn-lbl" style="color:${turnColour(v.turnout)};">${v.turnout==='Need Reminder'?'Remind':v.turnout}</div>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -2162,9 +2224,21 @@ function copyTemplate(id, name){
 
 // ── THEME SWITCHER ──
 const THEMES = {
+  slate: {
+    name:'Slate Professional',
+    desc:'Deep blue-grey · corporate',
+    bg:'#141824', surface:'#0f1320', card:'#1a2035',
+    border:'#252d3f', text:'#c8d0e0', muted:'#4a5470',
+    accent:'#2d6be4', green:'#3a9e7a', yellow:'#c9a840',
+    headerBg:'#0f1320', navBg:'#0f1320',
+    logoBg:'linear-gradient(135deg,#2d6be4,#3a9e7a)',
+    titleBg:'linear-gradient(90deg,#5a8fd4,#a0b8d0)',
+    kv1:'#2d6be4', kv2:'#3a9e7a', kv3:'#c9a840',
+    attr:'slate'
+  },
   midnight: {
     name:'Midnight Command',
-    desc:'Deep navy · Electric blue',
+    desc:'Deep navy · electric blue',
     bg:'#0a0d14', surface:'#111520', card:'#161c2e',
     border:'#1e2840', text:'#e8ecf4', muted:'#6b7a99',
     accent:'#4f8ef7', green:'#22d3a0', yellow:'#f5c842',
@@ -2173,11 +2247,11 @@ const THEMES = {
     logoBg:'linear-gradient(135deg,#4f8ef7,#22d3a0)',
     titleBg:'linear-gradient(90deg,#4f8ef7,#22d3a0)',
     kv1:'#4f8ef7', kv2:'#22d3a0', kv3:'#f5c842',
-    attr:null
+    attr:'midnight'
   },
   emerald: {
     name:'Emerald Field',
-    desc:'Forest green · Fresh',
+    desc:'Forest green · fresh',
     bg:'#0d1a12', surface:'#071209', card:'#112118',
     border:'#1e3a28', text:'#d4f0dc', muted:'#4d7a5e',
     accent:'#2dba6e', green:'#2dba6e', yellow:'#f5c842',
@@ -2190,7 +2264,7 @@ const THEMES = {
   },
   sunrise: {
     name:'Sunrise',
-    desc:'Light mode · Warm amber',
+    desc:'Light mode · warm amber',
     bg:'#fffaf3', surface:'#fff', card:'#fff',
     border:'#fde8c8', text:'#3d2006', muted:'#c47820',
     accent:'#e8631c', green:'#16a34a', yellow:'#d97706',
@@ -2203,7 +2277,7 @@ const THEMES = {
   },
   purple: {
     name:'Royal Purple',
-    desc:'Deep purple · Bold',
+    desc:'Deep purple · bold',
     bg:'#0e0816', surface:'#0a0614', card:'#1a1030',
     border:'#2d1a50', text:'#e8dcf8', muted:'#6b4a99',
     accent:'#9b6cf7', green:'#22d3a0', yellow:'#f5c842',
@@ -2217,7 +2291,7 @@ const THEMES = {
 };
 
 const THEME_KEY = 'taqwa_theme_v1';
-let currentTheme = localStorage.getItem(THEME_KEY) || 'midnight';
+let currentTheme = localStorage.getItem(THEME_KEY) || 'slate';
 
 function applyTheme(id) {
   const t = THEMES[id];
@@ -2225,14 +2299,13 @@ function applyTheme(id) {
   currentTheme = id;
   localStorage.setItem(THEME_KEY, id);
   const root = document.documentElement;
-  if (t.attr) {
-    root.setAttribute('data-theme', t.attr);
-  } else {
+  // slate is the :root default — remove data-theme attr to use it
+  if (!t.attr || t.attr === 'slate') {
     root.removeAttribute('data-theme');
+  } else {
+    root.setAttribute('data-theme', t.attr);
   }
-  // Re-render theme grid to show active state
   renderThemeGrid();
-  // Update charts if they exist (re-render backgrounds)
   updateCharts();
   toast('🎨 Theme changed to ' + t.name);
 }
