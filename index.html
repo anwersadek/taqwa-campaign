@@ -1530,7 +1530,7 @@ function renderVoters(){
         <div class="vc-name">${v.name}</div>
         ${badge?`<div class="vc-badges" style="margin-top:4px;">${badge}</div>`:''}
         <div class="vc-addr" style="margin-top:5px;">${v.address}</div>
-        ${v.phone?`<a href="tel:${String(v.phone)}" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;">Mobile</span><span style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;color:var(--green);">${String(v.phone)}</span></a>`:''}
+        ${v.phone?`<a href="tel:${String(v.phone)}" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;">Mobile</span><span style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;color:var(--green);">${String(v.phone).replace(/^44/,'0')}</span></a>`:''}
         ${v.canvasser?`<div class="vc-canvasser">👤 ${v.canvasser}</div>`:''}
         ${v.needsLift?`<div style="font-size:10px;color:var(--orange);margin-top:2px;">🚗 Needs a lift</div>`:''}
       </div>
@@ -2453,9 +2453,18 @@ function prConfirm(id){
   var newStatus = s.status==='confirmed' ? null : 'confirmed';
   setState(id, 'status', newStatus);
   if(newStatus==='confirmed'){
-    // instant push this single record to Sheet
+    // immediately update the voter's phone in the app's voters array
+    var r = DATA.find(function(d){ return d.id===id; });
+    if(r){
+      var ph = s.phone!==null ? s.phone : r.phone;
+      if(ph){
+        var v = voters.find(function(x){ return x.id===id; });
+        if(v){ v.phone = String(ph).trim(); persist(); renderVoters(); }
+      }
+    }
+    // push to Sheet silently
     prPushSingle(id);
-    // remove card from view with fade
+    // fade and remove card from view
     prFadeCard(id);
   } else {
     prRenderCards();
@@ -2486,21 +2495,41 @@ function prFadeCard(id){
 }
 function prPushSingle(id){
   var url = mobSheetsCfg.url;
-  if(!url) return; // silent fail if not configured — still saved in state
+  if(!url) return;
   var r = DATA.find(function(d){ return d.id===id; });
   if(!r) return;
   var s = getState(id);
   var ph = s.phone!==null ? s.phone : r.phone;
   if(!ph) return;
-  var record = {name:r.name, address:r.address, street:r.street, phone:String(ph), notes:s.notes||''};
+  var phoneStr = String(ph).replace(/^44/,'0').trim();
+
+  // Method 1: updatePhones — targeted update (needs new Apps Script)
+  var record = {name:r.name, address:r.address, street:r.street, phone:phoneStr, notes:s.notes||''};
   fetch(url, {
     method:'POST', mode:'no-cors',
     headers:{'Content-Type':'text/plain'},
     body: JSON.stringify({action:'updatePhones', sheetTab:mobSheetsCfg.tab||'Voters', records:[record]})
+  }).catch(function(){});
+
+  // Method 2: also do a full push of all voters so phone column is definitely updated
+  // This works with both old and new Apps Script
+  var rows = voters.map(function(v){
+    return {
+      ID:v.id, Name:v.name, Street:v.street, Address:v.address,
+      Support:v.support, Turnout:v.turnout, Validity:v.validity,
+      Phone:v.phone?String(v.phone).replace(/^44/,'0').trim():'',
+      Contacted:v.contacted||'', Canvasser:v.canvasser||'',
+      Notes:v.notes||'', NeedsLift:v.needsLift?'Yes':'', AssignedTo:v.assignedTo||''
+    };
+  });
+  fetch(url, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify({method:'push', rows:rows})
   }).then(function(){
-    toast('✅ Phone saved to Sheet');
+    toast('✅ Phone saved to Sheet','#22d3a0');
   }).catch(function(){
-    // silent — data still saved locally, can bulk push later
+    toast('⚠ Saved locally — push to Sheet manually','#f5c842');
   });
 }
 function prReset(id){
