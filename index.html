@@ -1279,7 +1279,7 @@ function hydrate(){
     d.forEach(u=>{
       const v=voters.find(x=>x.id===u.id);
       if(v){v.support=u.s;v.turnout=u.t;v.validity=u.vl;
-             v.notes=u.n||v.notes;v.phone=u.ph?String(u.ph):'';
+             v.notes=u.n||v.notes;v.phone=u.ph?formatPhone(u.ph):'';
              v.contacted=u.co||'';v.canvasser=u.ca||'';
              v.needsLift=u.nl||false;v.assignedTo=u.at||'';}
     });
@@ -1480,6 +1480,16 @@ function supportPillClass(s){
 function turnoutPillClass(t){return t==='Voted'?'vc-pill pill-voted':t==='Need Reminder'?'vc-pill pill-remind':t==='Not Voted'?'vc-pill pill-not':'vc-pill pill-unk';}
 
 // ── Design E voter card helpers ──
+// Formats UK phone numbers — always restores leading 0
+function formatPhone(ph){
+  if(!ph) return '';
+  var s = String(ph).trim().replace(/\s+/g,'');
+  if(s.startsWith('+44')) s = '0'+s.slice(3);
+  if(s.startsWith('44') && s.length===12) s = '0'+s.slice(2);
+  // if 10 digits and starts without 0, pad it
+  if(s.length===10 && !s.startsWith('0')) s = '0'+s;
+  return s;
+}
 function supIcon(s){
   if(s==='Yes')return'✅';
   if(s==='Lean Positive')return'🔵';
@@ -1530,7 +1540,7 @@ function renderVoters(){
         <div class="vc-name">${v.name}</div>
         ${badge?`<div class="vc-badges" style="margin-top:4px;">${badge}</div>`:''}
         <div class="vc-addr" style="margin-top:5px;">${v.address}</div>
-        ${v.phone?`<a href="tel:${String(v.phone)}" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;">Mobile</span><span style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;color:var(--green);">${String(v.phone).replace(/^44/,'0')}</span></a>`:''}
+        ${v.phone?`<a href="tel:${formatPhone(v.phone)}" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;">Mobile</span><span style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;color:var(--green);">${formatPhone(v.phone)}</span></a>`:''}
         ${v.canvasser?`<div class="vc-canvasser">👤 ${v.canvasser}</div>`:''}
         ${v.needsLift?`<div style="font-size:10px;color:var(--orange);margin-top:2px;">🚗 Needs a lift</div>`:''}
       </div>
@@ -2166,7 +2176,7 @@ async function mobPullFromSheets(silent=false) {
           if (r.Support)   v.support   = r.Support;
           if (r.Turnout)   v.turnout   = r.Turnout;
           if (r.Validity)  v.validity  = r.Validity;
-          if (r.Phone)     v.phone     = String(r.Phone);
+          if (r.Phone)     v.phone     = formatPhone(r.Phone);
           if (r.Canvasser) v.canvasser = r.Canvasser;
           if (r.Contacted) v.contacted = r.Contacted;
           if (r.Notes)     v.notes     = r.Notes;
@@ -2459,7 +2469,7 @@ function prConfirm(id){
       var ph = s.phone!==null ? s.phone : r.phone;
       if(ph){
         var v = voters.find(function(x){ return x.id===id; });
-        if(v){ v.phone = String(ph).trim(); persist(); renderVoters(); }
+        if(v){ v.phone = formatPhone(ph); persist(); renderVoters(); }
       }
     }
     // push to Sheet silently
@@ -2517,7 +2527,7 @@ function prPushSingle(id){
     return {
       ID:v.id, Name:v.name, Street:v.street, Address:v.address,
       Support:v.support, Turnout:v.turnout, Validity:v.validity,
-      Phone:v.phone?String(v.phone).replace(/^44/,'0').trim():'',
+      Phone:v.phone?formatPhone(v.phone):'',
       Contacted:v.contacted||'', Canvasser:v.canvasser||'',
       Notes:v.notes||'', NeedsLift:v.needsLift?'Yes':'', AssignedTo:v.assignedTo||''
     };
