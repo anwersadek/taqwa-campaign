@@ -147,7 +147,7 @@ body.team-mode .save-btn.edit-only{display:block!important;}
 .bottom-nav{
   height:calc(var(--nav-h) + var(--safe-bottom));
   padding-bottom:var(--safe-bottom);
-  background:#0d1220;
+  background:#000000;
   border-top:2px solid #1e2a48;
   display:flex;align-items:center;padding-top:4px;
   flex-shrink:0;position:relative;z-index:100;
@@ -156,11 +156,11 @@ body.team-mode .save-btn.edit-only{display:block!important;}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:7px 3px;border:none;border-radius:12px;background:transparent;transition:all .2s;position:relative;}
 .nav-item.active{background:linear-gradient(135deg,#1e3a6e,#162850);box-shadow:0 0 0 1px #2d6be4;}
 .nav-icon{width:36px;height:26px;display:flex;align-items:center;justify-content:center;font-size:22px;transition:all .2s;}
-.nav-item:not(.active) .nav-icon{opacity:.45;}
+.nav-item:not(.active) .nav-icon{opacity:.75;}
 .nav-item.active .nav-icon{opacity:1;}
 .nav-label{font-size:12px;font-weight:700;letter-spacing:.2px;}
 .nav-item.active .nav-label{color:#5a9ef7;}
-.nav-item:not(.active) .nav-label{color:#3a4468;}
+.nav-item:not(.active) .nav-label{color:#6a7a94;}
 .nav-badge{position:absolute;top:4px;right:calc(50% - 24px);background:var(--red);color:#fff;font-size:8px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
 
 /* ══════ SECTION HEADER ══════ */
@@ -1279,7 +1279,7 @@ function hydrate(){
     d.forEach(u=>{
       const v=voters.find(x=>x.id===u.id);
       if(v){v.support=u.s;v.turnout=u.t;v.validity=u.vl;
-             v.notes=u.n||v.notes;v.phone=u.ph||'';
+             v.notes=u.n||v.notes;v.phone=u.ph?String(u.ph):'';
              v.contacted=u.co||'';v.canvasser=u.ca||'';
              v.needsLift=u.nl||false;v.assignedTo=u.at||'';}
     });
@@ -1530,7 +1530,7 @@ function renderVoters(){
         <div class="vc-name">${v.name}</div>
         ${badge?`<div class="vc-badges" style="margin-top:4px;">${badge}</div>`:''}
         <div class="vc-addr" style="margin-top:5px;">${v.address}</div>
-        ${v.phone?`<a href="tel:${v.phone}" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;">Mobile</span><span style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;color:var(--green);">${v.phone}</span></a>`:''}
+        ${v.phone?`<a href="tel:${String(v.phone)}" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-bottom:4px;"><span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;">Mobile</span><span style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;color:var(--green);">${String(v.phone)}</span></a>`:''}
         ${v.canvasser?`<div class="vc-canvasser">👤 ${v.canvasser}</div>`:''}
         ${v.needsLift?`<div style="font-size:10px;color:var(--orange);margin-top:2px;">🚗 Needs a lift</div>`:''}
       </div>
@@ -2166,7 +2166,7 @@ async function mobPullFromSheets(silent=false) {
           if (r.Support)   v.support   = r.Support;
           if (r.Turnout)   v.turnout   = r.Turnout;
           if (r.Validity)  v.validity  = r.Validity;
-          if (r.Phone)     v.phone     = r.Phone;
+          if (r.Phone)     v.phone     = String(r.Phone);
           if (r.Canvasser) v.canvasser = r.Canvasser;
           if (r.Contacted) v.contacted = r.Contacted;
           if (r.Notes)     v.notes     = r.Notes;
@@ -2352,8 +2352,8 @@ function setState(id, key, val){
   if(!state[id]) state[id] = {status:null, phone:null, notes:""};
   state[id][key] = val;
   saveState();
-  updateProgress();
-  updatePushBtn();
+  prUpdateProgress();
+  prUpdatePushBtn();
 }
 
 // Progress
@@ -2450,13 +2450,58 @@ function prSetState(id, field, val){
 
 function prConfirm(id){
   var s = getState(id);
-  setState(id, 'status', s.status==='confirmed'?null:'confirmed');
-  prRenderCards();
+  var newStatus = s.status==='confirmed' ? null : 'confirmed';
+  setState(id, 'status', newStatus);
+  if(newStatus==='confirmed'){
+    // instant push this single record to Sheet
+    prPushSingle(id);
+    // remove card from view with fade
+    prFadeCard(id);
+  } else {
+    prRenderCards();
+  }
+  prUpdateProgress();
 }
 function prReject(id){
   var s = getState(id);
-  setState(id, 'status', s.status==='rejected'?null:'rejected');
-  prRenderCards();
+  var newStatus = s.status==='rejected' ? null : 'rejected';
+  setState(id, 'status', newStatus);
+  if(newStatus==='rejected'){
+    prFadeCard(id);
+  } else {
+    prRenderCards();
+  }
+  prUpdateProgress();
+}
+function prFadeCard(id){
+  var card = document.querySelector('[data-prid="'+id+'"]');
+  if(card){
+    card.style.transition='opacity .4s, transform .4s';
+    card.style.opacity='0';
+    card.style.transform='translateX(30px)';
+    setTimeout(function(){ prRenderCards(); }, 400);
+  } else {
+    prRenderCards();
+  }
+}
+function prPushSingle(id){
+  var url = mobSheetsCfg.url;
+  if(!url) return; // silent fail if not configured — still saved in state
+  var r = DATA.find(function(d){ return d.id===id; });
+  if(!r) return;
+  var s = getState(id);
+  var ph = s.phone!==null ? s.phone : r.phone;
+  if(!ph) return;
+  var record = {name:r.name, address:r.address, street:r.street, phone:String(ph), notes:s.notes||''};
+  fetch(url, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify({action:'updatePhones', sheetTab:mobSheetsCfg.tab||'Voters', records:[record]})
+  }).then(function(){
+    toast('✅ Phone saved to Sheet');
+  }).catch(function(){
+    // silent — data still saved locally, can bulk push later
+  });
 }
 function prReset(id){
   state[id] = {status:null, phone:null, notes:''};
