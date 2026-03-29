@@ -2773,8 +2773,8 @@ function setState(id, key, val){
   if(!state[id]) state[id] = {status:null, phone:null, notes:""};
   state[id][key] = val;
   saveState();
-  prUpdateProgress();
-  prUpdatePushBtn();
+  if(typeof prUpdateProgress === 'function') prUpdateProgress();
+  if(typeof prUpdatePushBtn === 'function') prUpdatePushBtn();
 }
 
 // Progress
