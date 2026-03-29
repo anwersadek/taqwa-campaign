@@ -817,6 +817,10 @@ body.team-mode .save-btn.edit-only{display:block!important;}
       <option value="">All Support Levels</option>
       <option>Yes</option><option>Lean Positive</option><option>Unknown</option>
     </select>
+    <button class="export-btn" onclick="printAllVotersByStreet()" style="background:rgba(34,211,160,.06);border-color:rgba(34,211,160,.2);">
+      <div class="export-icon" style="background:rgba(34,211,160,.1);">🖨</div>
+      <div class="export-text"><div class="et-title">Print Voters by Street</div><div class="et-sub">All voters · street groups · support status</div></div>
+    </button>
     <button class="export-btn" onclick="window.print()" style="background:rgba(155,108,247,.06);border-color:rgba(155,108,247,.2);">
       <div class="export-icon" style="background:rgba(155,108,247,.1);">🖨</div>
       <div class="export-text"><div class="et-title" style="color:var(--purple)">Print Knock-up Sheet</div><div class="et-sub">Sorted by street · valid records only</div></div>
@@ -1615,9 +1619,9 @@ function navTo(id){
   if(id==='backup')renderBackupList();
   if(id==='polling'){renderPollingDay();startCountdown();stopAgentSync();}
   if(id==='polling'){renderPollingDay();startCountdown();stopAgentSync();}
-  if(id==='warroom'){renderWarRoom();startCountdown();stopAgentSync();}
+  if(id==='warroom'){renderWarRoom();startCountdown();startWarRoomSync();}
   if(id==='agent'){renderAgent();startAgentSync();}
-  if(id!=='agent'&&id!=='polling'&&id!=='warroom') stopAgentSync();
+  if(id!=='agent'&&id!=='warroom') stopAgentSync();
   if(id==='phones'){prUpdateProgress();prRenderCards();}
   if(id==='voters')renderVoters();
 }
@@ -2038,6 +2042,109 @@ function toggleReminderSection(id){
   el.style.display=el.style.display==='none'?'block':'none';
 }
 
+// ── PRINT ALL VOTERS BY STREET ──
+function printAllVotersByStreet(){
+  var list = voters.filter(function(v){
+    return ['Valid','Needs Check'].includes(v.validity);
+  }).sort(function(a,b){
+    return a.street.localeCompare(b.street)||a.name.localeCompare(b.name);
+  });
+
+  // Group by street
+  var byStreet = {};
+  list.forEach(function(v){
+    if(!byStreet[v.street]) byStreet[v.street]=[];
+    byStreet[v.street].push(v);
+  });
+
+  var totalVoters = list.length;
+  var totalYes = list.filter(function(v){return ['Yes','Lean Positive'].includes(v.support);}).length;
+  var totalNo  = list.filter(function(v){return ['No','Lean Negative'].includes(v.support);}).length;
+  var totalUnk = list.filter(function(v){return !['Yes','Lean Positive','No','Lean Negative'].includes(v.support);}).length;
+
+  var rows = Object.entries(byStreet).map(function(entry){
+    var st = entry[0], vs = entry[1];
+    var stYes = vs.filter(function(v){return ['Yes','Lean Positive'].includes(v.support);}).length;
+    var stNo  = vs.filter(function(v){return ['No','Lean Negative'].includes(v.support);}).length;
+    var stUnk = vs.filter(function(v){return !['Yes','Lean Positive','No','Lean Negative'].includes(v.support);}).length;
+
+    var voterRows = vs.map(function(v, i){
+      var supLbl = v.support==='Lean Positive'?'Lean+':v.support==='Lean Negative'?'Lean-':(v.support||'Unknown');
+      var supCol = ['Yes','Lean Positive'].includes(v.support)?'#1a7a4a':['No','Lean Negative'].includes(v.support)?'#a02020':'#666';
+      var supBg  = ['Yes','Lean Positive'].includes(v.support)?'#e8f8ef':['No','Lean Negative'].includes(v.support)?'#fdeaea':'#f5f5f5';
+      var turnout = v.turnout==='Voted'?'✅ Voted':v.turnout==='Need Reminder'?'🔔 Remind':'—';
+      return '<tr style="background:'+(i%2===0?'#fff':'#fafafa')+';">'+
+        '<td style="padding:5px 8px;border:1px solid #ddd;font-size:11px;color:#555;text-align:center;">'+(i+1)+'</td>'+
+        '<td style="padding:5px 8px;border:1px solid #ddd;font-size:12px;font-weight:600;color:#111;">'+v.name+'</td>'+
+        '<td style="padding:5px 8px;border:1px solid #ddd;font-size:11px;color:#444;">'+v.address+'</td>'+
+        '<td style="padding:5px 8px;border:1px solid #ddd;font-size:11px;color:#555;text-align:center;font-family:monospace;">'+(v.phone?v.phone:'—')+'</td>'+
+        '<td style="padding:5px 8px;border:1px solid #ddd;text-align:center;">'+
+          '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:'+supBg+';color:'+supCol+';">'+supLbl+'</span>'+
+        '</td>'+
+        '<td style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:center;">'+turnout+'</td>'+
+        '<td style="padding:5px 8px;border:1px solid #ddd;font-size:11px;color:#888;text-align:center;">□</td>'+
+      '</tr>';
+    }).join('');
+
+    return '<div style="margin-bottom:20px;page-break-inside:avoid;">'+
+      '<div style="background:#1a2e4a;color:#fff;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;border-radius:4px 4px 0 0;">'+
+        '<span style="font-size:13px;font-weight:700;">📍 '+st+'</span>'+
+        '<span style="font-size:11px;opacity:.8;">'+vs.length+' voters &nbsp;|&nbsp; '+
+          '<span style="color:#7de8aa;">Yes/Lean+: '+stYes+'</span> &nbsp;'+
+          '<span style="color:#f9a8a8;">No/Lean-: '+stNo+'</span> &nbsp;'+
+          '<span style="color:#ccc;">Unknown: '+stUnk+'</span>'+
+        '</span>'+
+      '</div>'+
+      '<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;">'+
+        '<thead><tr style="background:#e8eef5;">'+
+          '<th style="padding:5px 8px;border:1px solid #ddd;font-size:10px;text-align:center;width:28px;">#</th>'+
+          '<th style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:left;">Name</th>'+
+          '<th style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:left;">Address</th>'+
+          '<th style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:center;">Mobile</th>'+
+          '<th style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:center;width:60px;">Support</th>'+
+          '<th style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:center;width:70px;">Turnout</th>'+
+          '<th style="padding:5px 8px;border:1px solid #ddd;font-size:11px;text-align:center;width:40px;">✓</th>'+
+        '</tr></thead>'+
+        '<tbody>'+voterRows+'</tbody>'+
+      '</table>'+
+    '</div>';
+  }).join('');
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'+
+    '<title>Taqwa EMS — Voters by Street</title>'+
+    '<style>'+
+      'body{font-family:Arial,sans-serif;margin:16px;color:#111;}'+
+      '@media print{body{margin:8px;}@page{size:A4;margin:12mm;}}'+
+      'h1{font-size:18px;margin-bottom:2px;}'+
+      '.summary{font-size:12px;color:#555;margin-bottom:16px;padding:8px 12px;background:#f5f8ff;border-radius:4px;border:1px solid #dde;}'+
+    '</style></head><body>'+
+    '<h1>🌴 Taqwa EMS — Voter List by Street</h1>'+
+    '<div class="summary">'+
+      'Printed: '+new Date().toLocaleString('en-GB')+' &nbsp;|&nbsp; '+
+      'Total voters: <strong>'+totalVoters+'</strong> &nbsp;|&nbsp; '+
+      '<span style="color:#1a7a4a;">Our Panel (Yes/Lean+): <strong>'+totalYes+'</strong></span> &nbsp;|&nbsp; '+
+      '<span style="color:#a02020;">Opposition (No/Lean-): <strong>'+totalNo+'</strong></span> &nbsp;|&nbsp; '+
+      'Unknown: <strong>'+totalUnk+'</strong>'+
+    '</div>'+
+    rows+
+    '</body></html>';
+
+  var w = window.open('','_blank');
+  if(w){
+    w.document.write(html);
+    w.document.close();
+    setTimeout(function(){ w.print(); }, 500);
+  } else {
+    // fallback — download as HTML
+    var blob = new Blob([html], {type:'text/html'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'taqwa_voters_by_street.html';
+    a.click();
+    toast('📄 Print sheet downloaded','#22d3a0');
+  }
+}
+
 // ── PRINT / EXPORT ──
 function renderPrintSheet(){
   const selStreet=document.getElementById('print-street-sel').value;
@@ -2215,11 +2322,31 @@ function backToChoose(){
 }
 // enterClear removed — viewer now requires PIN
 function enterPin(target){
+  // viewer and agent get direct access — no PIN needed
+  if(target==='viewer'){
+    accessLevel='viewer';
+    localStorage.setItem('taqwa_access','viewer');
+    document.body.classList.remove('app-locked');
+    applyMode();
+    closePinOverlay();
+    toast('👁 Team Members access granted','#6b7a99');
+    return;
+  }
+  if(target==='agent'){
+    accessLevel='agent';
+    localStorage.setItem('taqwa_access','agent');
+    document.body.classList.remove('app-locked');
+    applyMode();
+    closePinOverlay();
+    navTo('agent');
+    toast('🏛 Polling Agent access granted','#2d6be4');
+    return;
+  }
   pinTarget=target; pinBuffer=''; updatePinDots();
   document.getElementById('pin-choose').style.display='none';
   document.getElementById('pin-entry').style.display='block';
-  const titles = {viewer:'View Only Access', team:'Edit Mode', admin:'Taqwa Admin', agent:'Polling Agent'};
-  const subs   = {viewer:'Enter your 4-digit access code to view', team:'Enter your 4-digit team PIN', admin:'Enter your 4-digit admin PIN', agent:'Enter the 4-digit agent PIN'};
+  const titles = {team:'Edit Mode', admin:'Taqwa Admin'};
+  const subs   = {team:'Enter your 4-digit team PIN', admin:'Enter your 4-digit admin PIN'};
   document.getElementById('pin-entry-title').textContent = titles[target] || 'Enter PIN';
   document.getElementById('pin-entry-sub').textContent   = subs[target]   || 'Enter PIN to continue';
   document.getElementById('pin-hint').textContent = '';
@@ -2431,7 +2558,7 @@ async function mobPullFromSheets(silent=false) {
       localStorage.setItem(KEY, JSON.stringify(voters.map(v=>({id:v.id,s:v.support,t:v.turnout,vl:v.validity,n:v.notes,ph:v.phone,co:v.contacted,ca:v.canvasser}))));
       updateCharts(); renderVoters(); renderStreets(); renderReminders(); updateReminderBadge();
       if(currentScreen==='polling') renderPollingDay();
-      if(currentScreen==='warroom') renderWarRoom();
+      if(currentScreen==='warroom'){ renderWarRoom(); }
       if(currentScreen==='agent')   renderAgent();
       if(currentScreen==='agent'){ agentUpdateStats(); agentRenderDefault(); var q=(document.getElementById('agent-search')||{}).value||''; if(q) agentSearch(); agentFlashSync(); }
       if(currentScreen==='agent'){ agentUpdateStats(); renderAgent(); }
