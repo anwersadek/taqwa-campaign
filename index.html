@@ -553,7 +553,7 @@ body.team-mode .save-btn.edit-only{display:block!important;}
         </div>
         <div style="text-align:right;">
           <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px;">Opponents</div>
-          <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;color:#f5424e;">TAWAKKUL 🔴</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;color:#f5424e;">TAWAKKUL</div>
         </div>
       </div>
       <!-- Live bar -->
@@ -865,6 +865,24 @@ body.team-mode .save-btn.edit-only{display:block!important;}
   <!-- POLLING DAY SCREEN -->
   <div class="screen" id="screen-polling">
 
+    <!-- COUNTDOWN TIMER -->
+    <div id="pd-countdown-bar" style="border-radius:14px;padding:12px 16px;margin-bottom:10px;text-align:center;background:linear-gradient(135deg,#071a0f,#0d2e18);border:2px solid #22d3a0;transition:all .5s;">
+      <div style="font-size:10px;font-weight:700;color:#22d3a0;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;">⏱ Polls close at 6:00 PM</div>
+      <div id="pd-countdown" style="font-family:'JetBrains Mono';font-size:32px;font-weight:800;color:#fff;letter-spacing:2px;">--:--:--</div>
+      <div id="pd-countdown-sub" style="font-size:11px;color:#22d3a0;margin-top:2px;">Time remaining</div>
+    </div>
+
+    <!-- OUTSTANDING ALERT -->
+    <div id="pd-alert-box" style="display:none;border-radius:12px;padding:12px 14px;margin-bottom:10px;background:rgba(196,74,80,.1);border:2px solid #c44a50;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:24px;">🚨</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:#f06868;">Outstanding voters need attention!</div>
+          <div id="pd-alert-text" style="font-size:11px;color:#c44a50;margin-top:2px;"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- LIVE TURNOUT HEADER -->
     <div style="background:linear-gradient(135deg,#071a0f,#0d2e18);border:2px solid #22d3a0;border-radius:16px;padding:14px;margin-bottom:12px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
@@ -920,7 +938,7 @@ body.team-mode .save-btn.edit-only{display:block!important;}
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;">
         <div style="font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Morning Reminder</div>
-        <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;" id="wa-morning">🌴 Assalamu Alaikum wa Rahmatullahi wa Barakatuh dear brothers,
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;" id="wa-morning">🌴 Assalamu Alaikum wa Rahmatullahi wa Barakatuh dear brtawakkul,
 
 Today is Election Day for Hind Grove Masjid Committee — polling opens at 2pm.
 
@@ -946,7 +964,7 @@ JazakAllahu Khayran 🤲</div>
         <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Final Push (5pm)</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;" id="wa-final">🚨 URGENT — Polls close in 1 hour (6pm today)
 
-Dear brothers, if you have not yet voted for Team Taqwa 🌴 please go NOW.
+Dear brtawakkul, if you have not yet voted for Team Taqwa 🌴 please go NOW.
 
 The Date Palm Tree 🌴 on the ballot.
 
@@ -1033,10 +1051,14 @@ Barakallahu feekum 🤲</div>
       </div>
     </div>
 
-    <!-- Push buttons -->
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
-      <button onclick="prPushToSheet()" id="pr-push-btn" style="flex:1;padding:12px;background:#2dd4a0;color:#0a0d14;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;" disabled>🚀 Push Confirmed to Sheet</button>
-      <button onclick="prExportCSV()" style="padding:12px 14px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">📥 CSV</button>
+    <!-- Auto sync notice -->
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(58,158,122,.06);border:1px solid rgba(58,158,122,.2);border-radius:10px;padding:10px 14px;margin-bottom:10px;">
+      <span style="font-size:18px;">⚡</span>
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:700;color:#3a9e7a;">Auto-sync enabled</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:1px;">Confirm or Reject instantly saves to Voters & Google Sheet</div>
+      </div>
+      <button onclick="prExportCSV()" style="padding:8px 12px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;">📥 CSV</button>
     </div>
     <div id="pr-push-log" style="font-size:11px;color:#2dd4a0;margin-bottom:8px;min-height:16px;"></div>
 
@@ -1055,6 +1077,74 @@ Barakallahu feekum 🤲</div>
     <!-- Card list -->
     <div id="pr-card-list" style="display:flex;flex-direction:column;gap:8px;"></div>
     <button class="load-more" id="pr-load-more" onclick="prLoadMore()" style="display:none;">Load more ↓</button>
+  </div>
+
+  <!-- WAR ROOM SCREEN -->
+  <div class="screen" id="screen-warroom">
+
+    <!-- COUNTDOWN HERO -->
+    <div id="wr-countdown-bar" style="border-radius:16px;padding:16px;margin-bottom:12px;text-align:center;background:linear-gradient(135deg,#071a0f,#0d2e18);border:2px solid #22d3a0;transition:all .5s;">
+      <div style="font-size:10px;font-weight:700;color:#22d3a0;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">🗳 POLLING DAY — 29 MARCH 2026</div>
+      <div id="wr-countdown" style="font-family:'JetBrains Mono';font-size:42px;font-weight:800;color:#fff;letter-spacing:3px;line-height:1;">--:--:--</div>
+      <div id="wr-countdown-lbl" style="font-size:12px;color:#22d3a0;margin-top:6px;font-weight:600;">Time remaining until polls close</div>
+    </div>
+
+    <!-- BIG STATS GRID -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div style="background:linear-gradient(135deg,#0d2820,#112e20);border:2px solid #3a9e7a;border-radius:14px;padding:14px;text-align:center;">
+        <div style="font-size:11px;font-weight:700;color:#3a9e7a;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">✅ Voted</div>
+        <div id="wr-voted" style="font-family:'JetBrains Mono';font-size:44px;font-weight:800;color:#22d3a0;line-height:1;">0</div>
+        <div id="wr-voted-pct" style="font-size:12px;color:#3a9e7a;margin-top:4px;">of our panel</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#2a1015,#2e0d0d);border:2px solid #c44a50;border-radius:14px;padding:14px;text-align:center;">
+        <div style="font-size:11px;font-weight:700;color:#c44a50;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">⏳ Outstanding</div>
+        <div id="wr-outstanding" style="font-family:'JetBrains Mono';font-size:44px;font-weight:800;color:#f06868;line-height:1;">0</div>
+        <div id="wr-outstanding-lbl" style="font-size:12px;color:#c44a50;margin-top:4px;">still need to vote</div>
+      </div>
+    </div>
+
+    <!-- PROGRESS TO TARGET -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text);">🎯 Progress to Win Target</div>
+        <div id="wr-target-lbl" style="font-size:12px;font-weight:700;color:var(--accent);">— votes needed</div>
+      </div>
+      <div style="height:14px;background:var(--surface);border-radius:7px;overflow:hidden;margin-bottom:8px;">
+        <div id="wr-progress-bar" style="height:100%;background:linear-gradient(90deg,#2d6be4,#22d3a0);border-radius:7px;width:0%;transition:width 1s;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);">
+        <span>0</span>
+        <span id="wr-progress-pct" style="font-weight:700;color:var(--accent);">0%</span>
+        <span id="wr-target-num">Target: 0</span>
+      </div>
+    </div>
+
+    <!-- LIFT + STREETS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div style="background:rgba(247,131,79,.08);border:1px solid rgba(247,131,79,.3);border-radius:14px;padding:14px;text-align:center;">
+        <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;">🚗 Need Lift</div>
+        <div id="wr-lift" style="font-family:'JetBrains Mono';font-size:36px;font-weight:800;color:var(--orange);line-height:1;">0</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;">voters need transport</div>
+      </div>
+      <div style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.3);border-radius:14px;padding:14px;text-align:center;">
+        <div style="font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;">📍 Streets Done</div>
+        <div id="wr-streets-done" style="font-family:'JetBrains Mono';font-size:36px;font-weight:800;color:#a78bfa;line-height:1;">0/0</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;">streets fully voted</div>
+      </div>
+    </div>
+
+    <!-- STREET BREAKDOWN -->
+    <div class="sec-header"><div class="sec-title">📍 Street by Street</div></div>
+    <div id="wr-street-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+
+    <!-- WHATSAPP quick send -->
+    <div class="sec-header" style="margin-top:14px;"><div class="sec-title">📱 Quick Message</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;">
+      <button onclick="copyTemplate('wa-morning','Morning')" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 6px;cursor:pointer;color:var(--text2);font-size:11px;font-weight:600;">🌅<br>Morning</button>
+      <button onclick="copyTemplate('wa-afternoon','4pm')" style="background:var(--card);border:1px solid rgba(201,168,64,.3);border-radius:10px;padding:10px 6px;cursor:pointer;color:#c9a840;font-size:11px;font-weight:600;">⏰<br>4pm Push</button>
+      <button onclick="copyTemplate('wa-final','Final')" style="background:var(--card);border:1px solid rgba(196,74,80,.3);border-radius:10px;padding:10px 6px;cursor:pointer;color:#f06868;font-size:11px;font-weight:600;">🚨<br>Final Push</button>
+    </div>
+
   </div>
 
   <!-- BACKUP (sub-screen) -->
@@ -1084,6 +1174,9 @@ Barakallahu feekum 🤲</div>
 
 <!-- ══════════ BOTTOM NAV ══════════ -->
 <nav class="bottom-nav">
+  <button class="nav-item" id="nav-warroom" onclick="navTo('warroom')">
+    <div class="nav-icon">🎯</div><div class="nav-label">War Room</div>
+  </button>
   <button class="nav-item active" id="nav-home" onclick="navTo('home')">
     <div class="nav-icon">📊</div><div class="nav-label">Dashboard</div>
   </button>
@@ -1209,7 +1302,7 @@ Barakallahu feekum 🤲</div>
         </button>
         <button class="access-btn access-team" onclick="enterPin('team')">
           <span class="access-icon">🌴</span>
-          <span class="access-info"><strong>Taqwa Team Member</strong><br><span>Log contacts · update voter status</span></span>
+          <span class="access-info"><strong>Edit Mode</strong><br><span>Log contacts · update voter status</span></span>
           <span class="access-arrow">›</span>
         </button>
         <button class="access-btn access-admin" onclick="enterPin('admin')">
@@ -1441,7 +1534,8 @@ function navTo(id){
   if(id==='log'){renderLogEntries();renderLeaderboard();}
   if(id==='more'){renderPrintSheet();updateBackupMeta();renderThemeGrid();mobLoadSheetsCfg();}
   if(id==='backup')renderBackupList();
-  if(id==='polling')renderPollingDay();
+  if(id==='polling'){renderPollingDay();startCountdown();}
+  if(id==='warroom'){renderWarRoom();startCountdown();}
   if(id==='phones'){prUpdateProgress();prRenderCards();}
   if(id==='voters')renderVoters();
 }
@@ -1572,7 +1666,6 @@ function renderVoters(){
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <a href="tel:${formatPhone(v.phone)}" onclick="event.stopPropagation();showCallStatus(${v.id})" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:rgba(58,158,122,.1);border:1px solid rgba(58,158,122,.3);border-radius:8px;padding:5px 10px;">
               <span style="font-size:13px;">📞</span>
-              <span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Mobile</span>
               <span style="font-family:'JetBrains Mono';font-size:15px;font-weight:700;color:var(--green);">${formatPhone(v.phone)}</span>
             </a>
             ${v.callStatus?`<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;${v.callStatus==='Answered'?'background:#0d2820;color:#22d3a0;border:1px solid #22d3a0':v.callStatus==='No Answer'?'background:#2a1e08;color:#f5c842;border:1px solid #f5c842':v.callStatus==='Callback'?'background:#0d1a30;color:#4f8ef7;border:1px solid #4f8ef7':'background:#2a1015;color:#f06868;border:1px solid #f06868'}">${v.callStatus}</span>`:''}
@@ -1993,7 +2086,7 @@ function applyMode(){
   } else if(accessLevel==='team'){
     body.classList.add('team-mode');
     btn.className='mode-btn team'; btn.textContent='🌴';
-    btn.title='Team Member - tap to change';
+    btn.title='Edit Mode - tap to change';
   } else {
     body.classList.add('admin-mode');
     btn.className='mode-btn admin'; btn.textContent='🔐';
@@ -2027,7 +2120,7 @@ function enterPin(target){
   pinTarget=target; pinBuffer=''; updatePinDots();
   document.getElementById('pin-choose').style.display='none';
   document.getElementById('pin-entry').style.display='block';
-  const titles = {viewer:'View Only Access', team:'Taqwa Team Member', admin:'Taqwa Admin'};
+  const titles = {viewer:'View Only Access', team:'Edit Mode', admin:'Taqwa Admin'};
   const subs   = {viewer:'Enter your 4-digit access code to view', team:'Enter your 4-digit team PIN', admin:'Enter your 4-digit admin PIN'};
   document.getElementById('pin-entry-title').textContent = titles[target] || 'Enter PIN';
   document.getElementById('pin-entry-sub').textContent   = subs[target]   || 'Enter PIN to continue';
@@ -2050,7 +2143,7 @@ function checkPin(){
     if(hash === PINS[pinTarget]){
       accessLevel=pinTarget; applyMode(); closePinOverlay();
       document.body.classList.remove('app-locked'); // reveal app
-      const labels = {viewer:'👁 View-only access granted', team:'🌴 Team Member access granted', admin:'🔐 Admin access granted'};
+      const labels = {viewer:'👁 View-only access granted', team:'🌴 Edit Mode access granted', admin:'🔐 Admin access granted'};
       const colours = {viewer:'#6b7a99', team:'#22d3a0', admin:'#4f8ef7'};
       toast(labels[pinTarget], colours[pinTarget]);
       if(pinTarget==='admin') renderBackupList();
@@ -2079,6 +2172,7 @@ window.addEventListener('load',()=>{
   mobLoadSheetsCfg();
   // 2. Load local cache then pull from cloud
   hydrate();
+  startCountdown();
   // 3. Start UI
   accessLevel='viewer';
   applyMode();
@@ -2237,6 +2331,7 @@ async function mobPullFromSheets(silent=false) {
       localStorage.setItem(KEY, JSON.stringify(voters.map(v=>({id:v.id,s:v.support,t:v.turnout,vl:v.validity,n:v.notes,ph:v.phone,co:v.contacted,ca:v.canvasser}))));
       updateCharts(); renderVoters(); renderStreets(); renderReminders(); updateReminderBadge();
       if(currentScreen==='polling') renderPollingDay();
+      if(currentScreen==='warroom') renderWarRoom();
       mobUpdateSheetsStatus('connected', 'Last pull: ' + new Date().toLocaleTimeString('en-GB'));
       if(!silent){ mobAddSyncLog('✓ Pulled ' + updated + ' records', 'ok'); toast('✓ ' + updated + ' voters updated from Sheets', '#22d3a0'); }
       const dot=document.getElementById('live-sync-dot'); if(dot) dot.style.background='#4f8ef7'; setTimeout(()=>{ if(dot) dot.style.background='#22d3a0'; },400);
@@ -2469,28 +2564,65 @@ function prRenderCards(){
       ? '<div style="font-size:11px;color:var(--muted);background:var(--surface);border-radius:6px;padding:6px 8px;margin-bottom:8px;"><span style="color:var(--text);font-weight:600;">'+prEsc(r.matched_name)+'</span><span style="float:right;color:var(--accent);font-size:10px;">'+r.score+'%</span><div style="font-size:10px;margin-top:1px;">'+prEsc(r.matched_address||'')+'</div></div>'
       : '<div style="font-size:11px;color:#f06868;font-style:italic;margin-bottom:8px;">No match found in database</div>';
 
-    var html = '<div style="background:'+bgColor+';border:1px solid '+borderColor+';border-radius:12px;padding:12px 14px;position:relative;" data-prid="'+r.id+'">'+
-      '<div style="position:absolute;top:10px;right:10px;font-size:16px;">'+statusIcon+'</div>'+
-      '<div style="font-size:11px;font-family:monospace;font-weight:700;color:var(--accent);background:rgba(45,107,228,.12);border:1px solid rgba(45,107,228,.25);border-radius:4px;padding:1px 6px;display:inline-block;margin-bottom:4px;">#'+(r.id>10000?'—':r.id)+'</div>'+
-      '<div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;">'+prEsc(r.name)+'</div>'+
-      '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">'+prEsc(r.address)+' · '+prEsc(r.street)+'</div>'+
-      '<div style="display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(45,107,228,.1);color:'+confColor+';border:1px solid '+confColor+';margin-bottom:8px;">'+r.confidence+'</div>'+
-      matchHtml+
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">'+
-        '<span style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;">Mobile</span>'+
-        '<input type="tel" data-prfield="phone" data-prid="'+r.id+'" value="'+prEsc(phone||'')+'" placeholder="Enter phone number…" '+
-          'style="font-family:monospace;font-size:14px;font-weight:700;color:#a78bfa;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;flex:1;min-width:140px;outline:none;" '+
-          'oninput="prSetState('+r.id+',\'phone\',this.value)" />'+
-      '</div>'+
-      '<textarea data-prfield="notes" data-prid="'+r.id+'" placeholder="Notes…" rows="1" '+
-        'style="width:100%;font-size:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);outline:none;resize:none;margin-bottom:8px;font-family:inherit;" '+
-        'oninput="prSetState('+r.id+',\'notes\',this.value)">'+prEsc(notes)+'</textarea>'+
-      '<div style="display:flex;gap:6px;">'+
-        '<button onclick="prConfirm('+r.id+')" style="flex:1;padding:8px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(status==='confirmed'?'#2dd4a0':'rgba(45,212,160,.4)')+';background:'+(status==='confirmed'?'#2dd4a0':'rgba(45,212,160,.08)')+';color:'+(status==='confirmed'?'#0a0d14':'#2dd4a0')+';">✅ Confirm</button>'+
-        '<button onclick="prReject('+r.id+')" style="flex:1;padding:8px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(status==='rejected'?'#f06868':'rgba(240,104,104,.4)')+';background:'+(status==='rejected'?'#f06868':'rgba(240,104,104,.08)')+';color:'+(status==='rejected'?'#fff':'#f06868')+';">❌ Reject</button>'+
-        (status?'<button onclick="prReset('+r.id+')" style="padding:8px 10px;border-radius:7px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);">Reset</button>':'')+
-      '</div>'+
-    '</div>';
+    var matchedAddr = r.matched_address||'';
+    var matchedName = (r.matched_name && r.matched_name!=='No match found') ? r.matched_name : '';
+    var noMatch = !matchedName;
+
+    var html =
+      '<div style="background:'+bgColor+';border:1px solid '+borderColor+';border-radius:14px;overflow:hidden;margin-bottom:0;" data-prid="'+r.id+'">'+
+
+        // ── HEADER ──
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 13px;border-bottom:1px solid var(--border);background:var(--surface);">'+
+          '<div style="display:flex;align-items:center;gap:7px;">'+
+            '<span style="font-size:10px;font-weight:700;color:#c8d0e0;">📞 Phone Match Review</span>'+
+            '<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(45,107,228,.1);color:'+confColor+';border:1px solid '+confColor+';">'+r.confidence+(r.score?' · '+Math.round(r.score)+'%':'')+'</span>'+
+          '</div>'+
+          '<div style="display:flex;align-items:center;gap:6px;">'+
+            (statusIcon?'<span style="font-size:14px;">'+statusIcon+'</span>':'')+
+            '<span style="font-size:9px;color:var(--muted);font-family:monospace;">#'+(r.id>10000?'—':r.id)+'</span>'+
+          '</div>'+
+        '</div>'+
+
+        // ── SIDE BY SIDE GRID ──
+        '<div style="display:grid;grid-template-columns:1fr 1fr;">'+
+
+          // LEFT — Phone Source
+          '<div style="padding:11px 12px;border-right:1px solid var(--border);">'+
+            '<div style="font-size:8px;text-transform:uppercase;letter-spacing:.7px;font-weight:700;color:#5a9ef7;margin-bottom:7px;">📋 Phone Source</div>'+
+            '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.3;">'+prEsc(r.name)+'</div>'+
+            '<div style="font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:6px;">'+prEsc(r.address)+'</div>'+
+            '<div style="font-size:9px;color:var(--muted);margin-bottom:6px;">'+prEsc(r.street)+'</div>'+
+            '<div style="font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Mobile</div>'+
+            '<input type="tel" data-prfield="phone" data-prid="'+r.id+'" value="'+prEsc(formatPhone(phone||r.phone||''))+'" placeholder="Enter number…" '+
+              'style="width:100%;font-family:monospace;font-size:13px;font-weight:700;color:#a78bfa;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 8px;outline:none;-webkit-appearance:none;" '+
+              'oninput="prSetState('+r.id+',\'phone\',this.value)" />'+
+          '</div>'+
+
+          // RIGHT — Voter Register
+          '<div style="padding:11px 12px;">'+
+            '<div style="font-size:8px;text-transform:uppercase;letter-spacing:.7px;font-weight:700;color:#3a9e7a;margin-bottom:7px;">🗳 Voter Register</div>'+
+            (noMatch
+              ? '<div style="font-size:11px;color:#f06868;font-style:italic;margin-bottom:6px;">No match found</div>'
+              : '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.3;">'+prEsc(matchedName)+'</div>'+
+                '<div style="font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:6px;">'+prEsc(matchedAddr)+'</div>'
+            )+
+            '<div style="display:flex;align-items:center;gap:5px;margin-top:4px;">'+
+              '<span style="font-size:10px;color:var(--muted);">Match score:</span>'+
+              '<span style="font-size:13px;font-weight:700;color:'+confColor+';">'+Math.round(r.score||0)+'%</span>'+
+            '</div>'+
+            '<textarea data-prfield="notes" data-prid="'+r.id+'" placeholder="Notes…" rows="2" '+
+              'style="width:100%;margin-top:8px;font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);outline:none;resize:none;font-family:inherit;" '+
+              'oninput="prSetState('+r.id+',\'notes\',this.value)">'+prEsc(notes)+'</textarea>'+
+          '</div>'+
+        '</div>'+
+
+        // ── ACTIONS ──
+        '<div style="display:flex;gap:6px;padding:9px 12px;border-top:1px solid var(--border);">'+
+          '<button onclick="prConfirm('+r.id+')" style="flex:1;padding:9px 4px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(status==='confirmed'?'#2dd4a0':'rgba(45,212,160,.4)')+';background:'+(status==='confirmed'?'#2dd4a0':'rgba(45,212,160,.08)')+';color:'+(status==='confirmed'?'#0a0d14':'#2dd4a0')+';">✅ Confirm</button>'+
+          '<button onclick="prReject('+r.id+')" style="flex:1;padding:9px 4px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid '+(status==='rejected'?'#f06868':'rgba(240,104,104,.4)')+';background:'+(status==='rejected'?'#f06868':'rgba(240,104,104,.08)')+';color:'+(status==='rejected'?'#fff':'#f06868')+';">❌ Reject</button>'+
+          (status?'<button onclick="prReset('+r.id+')" style="padding:9px 10px;border-radius:8px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);">↩ Reset</button>':'')+
+        '</div>'+
+      '</div>';
     container.insertAdjacentHTML('beforeend', html);
   });
 
@@ -2510,35 +2642,90 @@ function prConfirm(id){
   var s = getState(id);
   var newStatus = s.status==='confirmed' ? null : 'confirmed';
   setState(id, 'status', newStatus);
-  if(newStatus==='confirmed'){
-    // immediately update the voter's phone in the app's voters array
-    var r = DATA.find(function(d){ return d.id===id; });
-    if(r){
-      var ph = s.phone!==null ? s.phone : r.phone;
-      if(ph){
-        var v = voters.find(function(x){ return x.id===id; });
-        if(v){ v.phone = formatPhone(ph); persist(); renderVoters(); }
-      }
+  var r = DATA.find(function(d){ return d.id===id; });
+  if(r){
+    var ph = s.phone!==null ? s.phone : r.phone;
+    var v = voters.find(function(x){ return x.id===id; });
+    if(v){
+      if(newStatus==='confirmed' && ph) v.phone = formatPhone(ph);
+      // store confirm/reject status on voter for reference
+      v.notes = v.notes ? v.notes : '';
     }
-    // push to Sheet silently
-    prPushSingle(id);
-    // fade and remove card from view
+    if(newStatus==='confirmed'){
+      persist();
+      renderVoters();
+      prSyncToSheet(id, 'confirmed');
+      prFadeCard(id);
+    } else {
+      persist();
+      prRenderCards();
+    }
+  }
+  prUpdateProgress();
+}
+
+function prReject(id){
+  var s = getState(id);
+  var newStatus = s.status==='rejected' ? null : 'rejected';
+  setState(id, 'status', newStatus);
+  if(newStatus==='rejected'){
+    prSyncToSheet(id, 'rejected');
     prFadeCard(id);
   } else {
     prRenderCards();
   }
   prUpdateProgress();
 }
-function prReject(id){
-  var s = getState(id);
-  var newStatus = s.status==='rejected' ? null : 'rejected';
-  setState(id, 'status', newStatus);
-  if(newStatus==='rejected'){
-    prFadeCard(id);
-  } else {
-    prRenderCards();
-  }
+
+function prReset(id){
+  state[id] = {status:null, phone:null, notes:''};
+  saveState();
   prUpdateProgress();
+  prUpdatePushBtn();
+  prRenderCards();
+  toast('↩ Reset — card restored','#6a7a94');
+}
+
+// Syncs a single record action to Google Sheets immediately
+function prSyncToSheet(id, action){
+  var url = mobSheetsCfg.url;
+  if(!url) return;
+  var r = DATA.find(function(d){ return d.id===id; });
+  if(!r) return;
+  var s = getState(id);
+  var ph = s.phone!==null ? s.phone : r.phone;
+
+  // Always do a full voters push — guaranteed to work and updates all fields
+  var rows = voters.map(function(v){
+    return {
+      ID:v.id, Name:v.name, Street:v.street, Address:v.address,
+      Support:v.support, Turnout:v.turnout, Validity:v.validity,
+      Phone:v.phone ? formatPhone(v.phone) : '',
+      Contacted:v.contacted||'', Canvasser:v.canvasser||'',
+      Notes:v.notes||'', NeedsLift:v.needsLift?'Yes':'',
+      AssignedTo:v.assignedTo||'', CallStatus:v.callStatus||''
+    };
+  });
+  fetch(url, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body: JSON.stringify({method:'push', rows:rows})
+  }).then(function(){
+    if(action==='confirmed') toast('✅ Phone confirmed & saved to Sheet','#22d3a0');
+  }).catch(function(){
+    toast('⚠ Saved locally — check connection','#f5c842');
+  });
+
+  // Also try targeted updatePhones if confirmed with a phone number
+  if(action==='confirmed' && ph){
+    fetch(url, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({action:'updatePhones', sheetTab:mobSheetsCfg.tab||'Voters',
+        records:[{name:r.name, address:r.address, street:r.street,
+          phone:formatPhone(ph), notes:s.notes||''}]})
+    }).catch(function(){});
+  }
 }
 function prFadeCard(id){
   var card = document.querySelector('[data-prid="'+id+'"]');
@@ -2551,108 +2738,6 @@ function prFadeCard(id){
     prRenderCards();
   }
 }
-function prPushSingle(id){
-  var url = mobSheetsCfg.url;
-  if(!url) return;
-  var r = DATA.find(function(d){ return d.id===id; });
-  if(!r) return;
-  var s = getState(id);
-  var ph = s.phone!==null ? s.phone : r.phone;
-  if(!ph) return;
-  var phoneStr = String(ph).replace(/^44/,'0').trim();
-
-  // Method 1: updatePhones — targeted update (needs new Apps Script)
-  var record = {name:r.name, address:r.address, street:r.street, phone:phoneStr, notes:s.notes||''};
-  fetch(url, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'text/plain'},
-    body: JSON.stringify({action:'updatePhones', sheetTab:mobSheetsCfg.tab||'Voters', records:[record]})
-  }).catch(function(){});
-
-  // Method 2: also do a full push of all voters so phone column is definitely updated
-  // This works with both old and new Apps Script
-  var rows = voters.map(function(v){
-    return {
-      ID:v.id, Name:v.name, Street:v.street, Address:v.address,
-      Support:v.support, Turnout:v.turnout, Validity:v.validity,
-      Phone:v.phone?formatPhone(v.phone):'',
-      Contacted:v.contacted||'', Canvasser:v.canvasser||'',
-      Notes:v.notes||'', NeedsLift:v.needsLift?'Yes':'', AssignedTo:v.assignedTo||'',
-      CallStatus:v.callStatus||''
-    };
-  });
-  fetch(url, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'text/plain'},
-    body: JSON.stringify({method:'push', rows:rows})
-  }).then(function(){
-    toast('✅ Phone saved to Sheet','#22d3a0');
-  }).catch(function(){
-    toast('⚠ Saved locally — push to Sheet manually','#f5c842');
-  });
-}
-function prReset(id){
-  state[id] = {status:null, phone:null, notes:''};
-  saveState(); prUpdateProgress(); prUpdatePushBtn();
-  prRenderCards();
-}
-
-function prUpdateProgress(){
-  var confirmed=0, rejected=0, total=DATA.length;
-  DATA.forEach(function(r){ var s=getState(r.id); if(s.status==='confirmed')confirmed++; else if(s.status==='rejected')rejected++; });
-  var pending = total - confirmed - rejected;
-  var reviewed = confirmed + rejected;
-  var pct = total>0?Math.round(reviewed/total*100):0;
-  setText('pr-confirmed', confirmed);
-  setText('pr-rejected', rejected);
-  setText('pr-pending', pending);
-  setText('pr-pct', pct+'% reviewed');
-  setStyle('pr-bar-c','width',Math.round(confirmed/total*100)+'%');
-  setStyle('pr-bar-r','width',Math.round(rejected/total*100)+'%');
-  // Badge
-  var badge = document.getElementById('nav-badge-phones');
-  if(badge){ if(confirmed>0){badge.style.display='flex';badge.textContent=confirmed;}else badge.style.display='none'; }
-  prUpdatePushBtn();
-}
-
-function prUpdatePushBtn(){
-  var confirmed = DATA.filter(function(r){ var s=getState(r.id); var ph=s.phone!==null?s.phone:r.phone; return s.status==='confirmed'&&ph; }).length;
-  var btn = document.getElementById('pr-push-btn');
-  if(btn){ btn.disabled=confirmed===0; btn.textContent='🚀 Push '+confirmed+' Confirmed to Sheet'; }
-}
-
-function prPushToSheet(){
-  var url = mobSheetsCfg.url;
-  if(!url){ toast('Set up Google Sheets URL first','#f5c842'); return; }
-  var confirmed = [];
-  DATA.forEach(function(r){
-    var s = getState(r.id);
-    var ph = s.phone!==null?s.phone:r.phone;
-    if(s.status==='confirmed'&&ph){
-      confirmed.push({name:r.name, address:r.address, street:r.street, phone:ph, notes:s.notes||''});
-    }
-  });
-  if(!confirmed.length){ toast('No confirmed records to push','#f5c842'); return; }
-  var btn = document.getElementById('pr-push-btn');
-  var log = document.getElementById('pr-push-log');
-  btn.disabled=true; btn.textContent='⏳ Pushing…';
-  if(log) log.textContent='Sending '+confirmed.length+' phone numbers…';
-  fetch(url, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'text/plain'},
-    body: JSON.stringify({action:'updatePhones', sheetTab:mobSheetsCfg.tab||'Voters', records:confirmed})
-  }).then(function(){
-    if(log) log.textContent='✅ Sent '+confirmed.length+' phones at '+new Date().toLocaleTimeString('en-GB');
-    toast('✅ '+confirmed.length+' phone numbers pushed to Sheet','#2dd4a0');
-    prUpdatePushBtn();
-  }).catch(function(err){
-    if(log) log.textContent='❌ '+err.message;
-    toast('Push failed — check connection','#f06868');
-    btn.disabled=false;
-    prUpdatePushBtn();
-  });
-}
-
 function prExportCSV(){
   var rows = [['ID','Name','Address','Street','Phone','Matched','Score','Confidence','Status','Notes']];
   DATA.forEach(function(r){
@@ -2670,6 +2755,140 @@ function prExportCSV(){
   toast('📥 CSV downloaded','#2dd4a0');
 }
 
+
+// ── WAR ROOM + COUNTDOWN ──
+var _countdownInterval = null;
+
+function startCountdown(){
+  if(_countdownInterval) clearInterval(_countdownInterval);
+  _countdownInterval = setInterval(tickCountdown, 1000);
+  tickCountdown();
+}
+
+function tickCountdown(){
+  var now = new Date();
+  var close = new Date(now);
+  close.setHours(18,0,0,0); // 6pm
+  var diff = close - now;
+
+  var ids = ['pd-countdown','wr-countdown'];
+  var subIds = ['pd-countdown-sub','wr-countdown-lbl'];
+  var barIds = ['pd-countdown-bar','wr-countdown-bar'];
+
+  if(diff <= 0){
+    ids.forEach(function(id){ setText(id,'POLLS CLOSED'); });
+    subIds.forEach(function(id){ setText(id,'Polls closed at 6:00 PM'); });
+    barIds.forEach(function(id){
+      var el=document.getElementById(id);
+      if(el){el.style.background='linear-gradient(135deg,#1a0707,#2e0d0d)';el.style.borderColor='#c44a50';}
+    });
+    clearInterval(_countdownInterval);
+    return;
+  }
+
+  var h = Math.floor(diff/3600000);
+  var m = Math.floor((diff%3600000)/60000);
+  var s = Math.floor((diff%60000)/1000);
+  var str = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  ids.forEach(function(id){ setText(id,str); });
+
+  // colour changes as deadline approaches
+  var urgent = diff < 30*60*1000; // < 30 mins
+  var warning = diff < 60*60*1000; // < 1 hr
+  barIds.forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    if(urgent){
+      el.style.background='linear-gradient(135deg,#2e0d0d,#1a0707)';
+      el.style.borderColor='#f06868';
+      el.style.animation='pulse 1s infinite';
+    } else if(warning){
+      el.style.background='linear-gradient(135deg,#2a1e08,#1a1205)';
+      el.style.borderColor='#f5c842';
+    }
+  });
+  subIds.forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    if(urgent) el.style.color='#f06868';
+    else if(warning) el.style.color='#f5c842';
+    else el.style.color='#22d3a0';
+  });
+
+  // Update outstanding alert
+  renderOutstandingAlert();
+}
+
+function renderOutstandingAlert(){
+  var panel = getOurPanel ? getOurPanel() : [];
+  var outstanding = panel.filter(function(v){ return v.turnout!=='Voted'; });
+  var alertBox = document.getElementById('pd-alert-box');
+  var alertTxt = document.getElementById('pd-alert-txt');
+  if(!alertBox) return;
+  var now = new Date();
+  var close = new Date(); close.setHours(18,0,0,0);
+  var minsLeft = Math.floor((close-now)/60000);
+  if(outstanding.length > 0 && minsLeft < 120 && minsLeft > 0){
+    alertBox.style.display='block';
+    var txt = document.getElementById('pd-alert-text');
+    if(txt) txt.textContent = outstanding.length+' confirmed supporters haven\'t voted — '+minsLeft+' mins left!';
+  } else {
+    alertBox.style.display='none';
+  }
+}
+
+function renderWarRoom(){
+  var panel = getOurPanel();
+  var voted = panel.filter(function(v){ return v.turnout==='Voted'; }).length;
+  var outstanding = panel.filter(function(v){ return v.turnout!=='Voted'; }).length;
+  var lift = panel.filter(function(v){ return v.needsLift && v.turnout!=='Voted'; }).length;
+  var total = panel.length;
+  var pct = total>0?Math.round(voted/total*100):0;
+
+  // valid voter count for win target
+  var valid = voters.filter(function(v){
+    return ['Valid','Needs Check'].includes(v.validity);
+  }).length;
+  var target = Math.floor(valid/2)+1;
+  var taqwaTotal = voters.filter(function(v){
+    return ['Yes','Lean Positive'].includes(v.support) && ['Valid','Needs Check'].includes(v.validity);
+  }).length;
+  var gap = Math.max(0, target - voted);
+
+  setText('wr-voted', voted);
+  setText('wr-voted-pct', pct+'% of our panel');
+  setText('wr-outstanding', outstanding);
+  setText('wr-lift', lift);
+  setText('wr-target-lbl', gap>0 ? gap+' more votes to win' : '🎉 Target reached!');
+  setText('wr-target-num', 'Target: '+target);
+  setText('wr-progress-pct', Math.min(100,Math.round(voted/target*100))+'%');
+  setStyle('wr-progress-bar','width',Math.min(100,Math.round(voted/target*100))+'%');
+
+  // Street breakdown
+  var streets = [...new Set(panel.map(function(v){ return v.street; }))].sort();
+  var doneCount = 0;
+  var streetHTML = streets.map(function(st){
+    var stVoters = panel.filter(function(v){ return v.street===st; });
+    var stVoted = stVoters.filter(function(v){ return v.turnout==='Voted'; }).length;
+    var stTotal = stVoters.length;
+    var stPct = stTotal>0?Math.round(stVoted/stTotal*100):0;
+    var done = stVoted===stTotal && stTotal>0;
+    if(done) doneCount++;
+    var barCol = done?'#22d3a0':stPct>50?'#2d6be4':'#c44a50';
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">'+
+        '<div style="font-size:12px;font-weight:600;color:var(--text);">'+(done?'✅ ':'')+st+'</div>'+
+        '<div style="font-size:11px;font-weight:700;color:'+barCol+';">'+stVoted+'/'+stTotal+'</div>'+
+      '</div>'+
+      '<div style="height:6px;background:var(--surface);border-radius:3px;overflow:hidden;">'+
+        '<div style="height:100%;width:'+stPct+'%;background:'+barCol+';border-radius:3px;transition:width .8s;"></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+  setText('wr-streets-done', doneCount+'/'+streets.length);
+  var el = document.getElementById('wr-street-list');
+  if(el) el.innerHTML = streetHTML || '<div style="color:var(--muted);font-size:12px;padding:8px;">No panel voters found.</div>';
+}
 
 // ── THEME SWITCHER ──
 const THEMES = {
