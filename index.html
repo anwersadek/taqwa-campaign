@@ -1165,6 +1165,10 @@ Barakallahu feekum 🤲</div>
     <div style="background:linear-gradient(135deg,#0d1a2e,#111e38);border:2px solid #2d6be4;border-radius:16px;padding:14px 16px;margin-bottom:12px;text-align:center;">
       <div style="font-size:10px;font-weight:700;color:#5a9ef7;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;">🏛 Polling Station Agent</div>
       <div style="font-size:13px;color:var(--text2);">Search a voter · check their status · mark voted</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;">
+        <div class="live-dot" style="width:7px;height:7px;"></div>
+        <span style="font-size:10px;color:#22d3a0;font-weight:600;" id="agent-sync-lbl">LIVE · syncing every 5 seconds</span>
+      </div>
     </div>
 
     <!-- SEARCH BOX — BIG and prominent -->
@@ -1609,9 +1613,11 @@ function navTo(id){
   if(id==='log'){renderLogEntries();renderLeaderboard();}
   if(id==='more'){renderPrintSheet();updateBackupMeta();renderThemeGrid();mobLoadSheetsCfg();}
   if(id==='backup')renderBackupList();
-  if(id==='polling'){renderPollingDay();startCountdown();}
-  if(id==='warroom'){renderWarRoom();startCountdown();}
-  if(id==='agent'){renderAgent();}
+  if(id==='polling'){renderPollingDay();startCountdown();stopAgentSync();}
+  if(id==='polling'){renderPollingDay();startCountdown();stopAgentSync();}
+  if(id==='warroom'){renderWarRoom();startCountdown();stopAgentSync();}
+  if(id==='agent'){renderAgent();startAgentSync();}
+  if(id!=='agent'&&id!=='polling'&&id!=='warroom') stopAgentSync();
   if(id==='phones'){prUpdateProgress();prRenderCards();}
   if(id==='voters')renderVoters();
 }
@@ -2426,6 +2432,9 @@ async function mobPullFromSheets(silent=false) {
       updateCharts(); renderVoters(); renderStreets(); renderReminders(); updateReminderBadge();
       if(currentScreen==='polling') renderPollingDay();
       if(currentScreen==='warroom') renderWarRoom();
+      if(currentScreen==='agent')   renderAgent();
+      if(currentScreen==='agent'){ agentUpdateStats(); agentRenderDefault(); var q=(document.getElementById('agent-search')||{}).value||''; if(q) agentSearch(); agentFlashSync(); }
+      if(currentScreen==='agent'){ agentUpdateStats(); renderAgent(); }
       mobUpdateSheetsStatus('connected', 'Last pull: ' + new Date().toLocaleTimeString('en-GB'));
       if(!silent){ mobAddSyncLog('✓ Pulled ' + updated + ' records', 'ok'); toast('✓ ' + updated + ' voters updated from Sheets', '#22d3a0'); }
       const dot=document.getElementById('live-sync-dot'); if(dot) dot.style.background='#4f8ef7'; setTimeout(()=>{ if(dot) dot.style.background='#22d3a0'; },400);
@@ -2436,14 +2445,42 @@ async function mobPullFromSheets(silent=false) {
     if(!silent){ mobUpdateSheetsStatus('error','Connection failed'); mobAddSyncLog('✗ '+e.message,'err'); toast('Cannot reach Google','#f5424e'); }
   }
 }
+var _agentSyncTimer = null;
+
 function mobStartAutoSync() {
   if (mobAutoSyncTimer) clearInterval(mobAutoSyncTimer);
   if (!mobSheetsCfg.url) return;
   mobAutoSyncTimer = setInterval(() => {
-    if (mobSheetsCfg.url) mobPullFromSheets(true); // silent background pull
+    if (mobSheetsCfg.url) mobPullFromSheets(true);
   }, 30000);
   const dot = document.getElementById('live-sync-dot');
   if(dot) dot.style.display = 'block';
+}
+
+// ── AGENT FAST SYNC — 5 second refresh ──
+var _agentSyncTimer = null;
+
+function startAgentSync(){
+  stopAgentSync();
+  if(!mobSheetsCfg.url) return;
+  _agentSyncTimer = setInterval(function(){
+    mobPullFromSheets(true); // silent pull every 5s
+    agentUpdateStats();
+    if(currentScreen==='agent') renderAgent();
+    agentFlashSync();
+  }, 5000);
+}
+
+function stopAgentSync(){
+  if(_agentSyncTimer){ clearInterval(_agentSyncTimer); _agentSyncTimer=null; }
+}
+
+function agentFlashSync(){
+  var dot = document.getElementById('agent-sync-dot');
+  if(!dot) return;
+  dot.style.background='#22d3a0';
+  dot.style.transform='scale(1.4)';
+  setTimeout(function(){ dot.style.background='#3a9e7a'; dot.style.transform='scale(1)'; }, 400);
 }
 
 // ── POLLING DAY ──
@@ -2849,6 +2886,26 @@ function prExportCSV(){
   toast('📥 CSV downloaded','#2dd4a0');
 }
 
+
+function startAgentSync(){
+  stopAgentSync();
+  if(!mobSheetsCfg.url){
+    var lbl=document.getElementById('agent-sync-lbl');
+    if(lbl) lbl.textContent='Offline — no Sheet connected';
+    return;
+  }
+  _agentSyncTimer = setInterval(function(){
+    mobPullFromSheets(true);
+    var lbl=document.getElementById('agent-sync-lbl');
+    if(lbl) lbl.textContent='LIVE · last sync '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }, 5000);
+  var lbl=document.getElementById('agent-sync-lbl');
+  if(lbl) lbl.textContent='LIVE · syncing every 5 seconds';
+}
+
+function stopAgentSync(){
+  if(_agentSyncTimer){ clearInterval(_agentSyncTimer); _agentSyncTimer=null; }
+}
 
 // ── POLLING STATION AGENT ──
 function renderAgent(){
