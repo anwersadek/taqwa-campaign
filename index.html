@@ -393,7 +393,7 @@ body.team-mode .save-btn.edit-only{display:block!important;}
 
 /* ══════ PIN OVERLAY ══════ */
 .pin-overlay{position:fixed;inset:0;background:rgba(5,8,16,.95);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(10px);}
-.pin-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:30px 24px;width:min(340px,90vw);text-align:center;}
+.pin-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:24px 20px;width:min(340px,90vw);text-align:center;max-height:90vh;overflow-y:auto;}
 .pin-title{font-family:'Bebas Neue';font-size:26px;letter-spacing:3px;background:linear-gradient(90deg,#4f8ef7,#22d3a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;}
 .pin-sub{font-size:12px;color:var(--muted);margin-bottom:22px;}
 .pin-mode-row{display:flex;gap:8px;margin-bottom:22px;}
@@ -411,12 +411,12 @@ body.team-mode .save-btn.edit-only{display:block!important;}
 .pk.zero{grid-column:2;}
 .pk.cancel{color:var(--muted);font-size:14px;}
 /* ── ACCESS SCREEN BUTTONS ── */
-.access-btn{width:100%;display:flex;align-items:center;gap:12px;padding:14px 14px;border-radius:14px;border:1px solid;cursor:pointer;text-align:left;transition:all .18s;font-family:inherit;}
+.access-btn{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid;cursor:pointer;text-align:left;transition:all .18s;font-family:inherit;}
 .access-btn:active{transform:scale(.97);}
-.access-icon{font-size:24px;flex-shrink:0;width:32px;text-align:center;}
-.access-info{flex:1;font-size:13px;line-height:1.4;}
-.access-info strong{display:block;font-size:14px;font-weight:700;}
-.access-info span{font-size:11px;opacity:.7;}
+.access-icon{font-size:22px;flex-shrink:0;width:28px;text-align:center;}
+.access-info{flex:1;font-size:14px;line-height:1.4;}
+.access-info strong{display:block;font-size:16px;font-weight:700;}
+.access-info span{font-size:12px;opacity:.7;}
 .access-arrow{font-size:20px;color:var(--muted);flex-shrink:0;}
 .access-clear{background:rgba(107,122,153,.08);border-color:var(--border);color:var(--text);}
 .access-clear:hover{background:rgba(107,122,153,.15);border-color:var(--muted);}
@@ -1363,11 +1363,16 @@ Barakallahu feekum 🤲</div>
     <div id="pin-choose">
       <div class="pin-title" style="font-size:17px;letter-spacing:1px;">Hind Grove Masjid</div>
       <div style="font-family:'Bebas Neue';font-size:13px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">Taqwa Team Campaign System</div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:22px;padding:0 4px;">Select your access level to continue</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:12px;padding:0 4px;">Select your access level to continue</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <button class="access-btn" id="agent-access-btn" onclick="enterPin('agent')" style="background:linear-gradient(135deg,#0d1a2e,#111e38);border:2px solid #2d6be4;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;text-align:left;transition:all .2s;">
+          <span class="access-icon">🏛</span>
+          <span class="access-info"><strong style="color:#5a9ef7;">Polling Agent</strong></span>
+          <span class="access-arrow" style="color:#2d6be4;">›</span>
+        </button>
         <button class="access-btn access-clear" onclick="enterPin('viewer')">
           <span class="access-icon">👁</span>
-          <span class="access-info"><strong>View Only</strong><br><span>Browse campaign data · no edits · requires access code</span></span>
+          <span class="access-info"><strong>Team Members</strong><br><span>Browse campaign information</span></span>
           <span class="access-arrow">›</span>
         </button>
         <button class="access-btn access-team" onclick="enterPin('team')">
@@ -2134,6 +2139,7 @@ function importBackupFromFile(input){
 const PINS = {
   viewer:'b698d86c67a2cff80405bd47af322216c552fd3a52f9c58a70f7b3a3313895b1',
   team:  '2b5d2ba5803e6fe3a2bc08b5f3965f47a92918a9c44b8090618d5d5a2876cf8c',
+  agent: '888df25ae35772424a560c7152a1de794440e0ea5cfee62828333a456a506e05',
   admin: '46635b56d3c7f0b7bb26adae2a1692debbfd145d4a0986a9137fe91e73e70360'
 };
 
@@ -2153,7 +2159,11 @@ function applyMode(){
   if(accessLevel==='viewer'){
     body.classList.add('readonly');
     btn.className='mode-btn viewer'; btn.textContent='👁';
-    btn.title='View Only - tap to change';
+    btn.title='TAQWA Panel - tap to change';
+  } else if(accessLevel==='agent'){
+    body.classList.add('team-mode');
+    btn.className='mode-btn team'; btn.textContent='🏛';
+    btn.title='Polling Agent - tap to change';
   } else if(accessLevel==='team'){
     body.classList.add('team-mode');
     btn.className='mode-btn team'; btn.textContent='🌴';
@@ -2181,18 +2191,29 @@ function closePinOverlay(){
   document.getElementById('pinOverlay').style.display='none';
   pinBuffer=''; updatePinDots();
 }
+function enterAsAgent(){
+  // Agent gets team-level access but lands on Agent tab
+  accessLevel = 'agent';
+  localStorage.setItem('taqwa_access','agent');
+  document.body.classList.remove('app-locked');
+  applyMode();
+  navTo('agent');
+  toast('🏛 Polling Agent access granted','#2d6be4');
+}
+
 function backToChoose(){
   document.getElementById('pin-choose').style.display='block';
   document.getElementById('pin-entry').style.display='none';
   pinBuffer=''; updatePinDots();
+  setTimeout(function(){ var b=document.getElementById('agent-access-btn'); if(b) b.focus(); },100);
 }
 // enterClear removed — viewer now requires PIN
 function enterPin(target){
   pinTarget=target; pinBuffer=''; updatePinDots();
   document.getElementById('pin-choose').style.display='none';
   document.getElementById('pin-entry').style.display='block';
-  const titles = {viewer:'View Only Access', team:'Edit Mode', admin:'Taqwa Admin'};
-  const subs   = {viewer:'Enter your 4-digit access code to view', team:'Enter your 4-digit team PIN', admin:'Enter your 4-digit admin PIN'};
+  const titles = {viewer:'View Only Access', team:'Edit Mode', admin:'Taqwa Admin', agent:'Polling Agent'};
+  const subs   = {viewer:'Enter your 4-digit access code to view', team:'Enter your 4-digit team PIN', admin:'Enter your 4-digit admin PIN', agent:'Enter the 4-digit agent PIN'};
   document.getElementById('pin-entry-title').textContent = titles[target] || 'Enter PIN';
   document.getElementById('pin-entry-sub').textContent   = subs[target]   || 'Enter PIN to continue';
   document.getElementById('pin-hint').textContent = '';
@@ -2214,10 +2235,11 @@ function checkPin(){
     if(hash === PINS[pinTarget]){
       accessLevel=pinTarget; applyMode(); closePinOverlay();
       document.body.classList.remove('app-locked'); // reveal app
-      const labels = {viewer:'👁 View-only access granted', team:'🌴 Edit Mode access granted', admin:'🔐 Admin access granted'};
-      const colours = {viewer:'#6b7a99', team:'#22d3a0', admin:'#4f8ef7'};
-      toast(labels[pinTarget], colours[pinTarget]);
+      const labels  = {viewer:'👁 View-only access granted', team:'🌴 Edit Mode access granted', admin:'🔐 Admin access granted', agent:'🏛 Polling Agent access granted'};
+      const colours = {viewer:'#6b7a99', team:'#22d3a0', admin:'#4f8ef7', agent:'#2d6be4'};
+      toast(labels[pinTarget]||'✅ Access granted', colours[pinTarget]||'#22d3a0');
       if(pinTarget==='admin') renderBackupList();
+      if(pinTarget==='agent') navTo('agent');
     } else {
       for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);if(d)d.className='pd on err';}
       setTimeout(()=>{
@@ -2244,6 +2266,7 @@ window.addEventListener('load',()=>{
   // 2. Load local cache then pull from cloud
   hydrate();
   startCountdown();
+  setTimeout(function(){ var b=document.getElementById('agent-access-btn'); if(b) b.focus(); },300);
   // 3. Start UI
   accessLevel='viewer';
   applyMode();
@@ -2907,47 +2930,110 @@ function agentClear(){
   agentShowDefault();
 }
 
-function agentMarkVoted(id){
+function agentMarkVotedAs(id, side){
   if(accessLevel==='viewer'){ toast('Sign in to update','#f5c842'); return; }
   var v = voters.find(function(x){ return x.id===id; });
   if(!v) return;
-  var wasVoted = v.turnout==='Voted';
-  v.turnout = wasVoted ? 'Unknown' : 'Voted';
+
+  if(side==='undo'){
+    v.turnout = 'Unknown';
+    toast('↩ Vote cleared — '+v.name, '#6a7a94');
+  } else if(side==='ours'){
+    v.turnout = 'Voted';
+    // make sure support reflects ours if previously unknown
+    if(!['Yes','Lean Positive'].includes(v.support)) v.support = 'Yes';
+    toast('🌴 Voted — Our Panel: '+v.name, '#22d3a0');
+  } else if(side==='theirs'){
+    v.turnout = 'Voted';
+    if(!['No','Lean Negative'].includes(v.support)) v.support = 'No';
+    toast('🔴 Voted — Opposition: '+v.name, '#f06868');
+  } else if(side==='unknown'){
+    v.turnout = 'Voted';
+    v.support = 'Unknown';
+    toast('⬜ Voted — Unknown: '+v.name, '#8a96b0');
+  }
+
   persist(); updateCharts(); renderAgent();
-  toast(wasVoted ? '↩ Unmarked' : '✅ Marked as Voted — '+v.name, '#22d3a0');
 }
 
 function agentCard(v){
   var voted = v.turnout==='Voted';
+  var votedOurs  = v.turnout==='Voted' && ['Yes','Lean Positive'].includes(v.support);
+  var votedTheirs= v.turnout==='Voted' && ['No','Lean Negative'].includes(v.support);
   var ph = v.phone ? formatPhone(v.phone) : '';
-  var supCol = v.support==='Yes'?'#22d3a0':v.support==='Lean Positive'?'#5a9ef7':v.support==='No'?'#f06868':v.support==='Lean Negative'?'#f7834f':'#6a7a94';
-  var supLbl = v.support==='Lean Positive'?'Lean+':v.support==='Lean Negative'?'Lean-':v.support;
 
-  return '<div style="background:'+(voted?'rgba(34,211,160,.05)':'var(--card)')+';border:1px solid '+(voted?'rgba(34,211,160,.3)':'var(--border)')+';border-radius:14px;overflow:hidden;">'+
+  var isOurs  = ['Yes','Lean Positive'].includes(v.support);
+  var isTheirs= ['No','Lean Negative'].includes(v.support);
+  var supLbl  = v.support==='Lean Positive'?'Lean+':v.support==='Lean Negative'?'Lean-':v.support||'Unknown';
 
-    // TOP — name, ID, support badge
-    '<div style="padding:12px 14px 8px;display:flex;align-items:flex-start;gap:10px;">'+
-      '<div style="flex:1;min-width:0;">'+
-        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">'+
-          '<span style="font-family:\'JetBrains Mono\';font-size:10px;font-weight:700;color:#5a9ef7;background:rgba(45,107,228,.12);border:1px solid rgba(45,107,228,.25);border-radius:4px;padding:1px 6px;">#'+v.id+'</span>'+
-          '<span style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:4px;color:'+supCol+';background:rgba(0,0,0,.2);border:1px solid '+supCol+';">'+supLbl+'</span>'+
-          (v.needsLift?'<span style="font-size:9px;color:var(--orange);">🚗 Lift</span>':'')+
-        '</div>'+
-        '<div style="font-size:16px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:2px;">'+v.name+'</div>'+
-        '<div style="font-size:12px;color:var(--muted);line-height:1.5;">'+v.address+'</div>'+
-        (ph?'<a href="tel:'+ph+'" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;margin-top:5px;">'+
-          '<span style="font-size:12px;">📞</span>'+
-          '<span style="font-family:\'JetBrains Mono\';font-size:14px;font-weight:700;color:#3a9e7a;">'+ph+'</span>'+
-        '</a>':'')+
+  var cardBg, cardBorder, teamBadgeBg, teamBadgeCol, teamLabel;
+  if(voted){
+    cardBg='rgba(34,211,160,.05)'; cardBorder='rgba(34,211,160,.35)';
+    teamBadgeBg='rgba(34,211,160,.1)'; teamBadgeCol='#22d3a0'; teamLabel='✅ Voted';
+  } else if(isOurs){
+    cardBg='rgba(45,107,228,.06)'; cardBorder='rgba(45,107,228,.35)';
+    teamBadgeBg='rgba(34,211,160,.12)'; teamBadgeCol='#22d3a0'; teamLabel='🌴 Our Panel';
+  } else if(isTheirs){
+    cardBg='rgba(196,74,80,.05)'; cardBorder='rgba(196,74,80,.25)';
+    teamBadgeBg='rgba(196,74,80,.1)'; teamBadgeCol='#f06868'; teamLabel='🔴 Opposition';
+  } else {
+    cardBg='var(--card)'; cardBorder='var(--border)';
+    teamBadgeBg='rgba(74,84,112,.1)'; teamBadgeCol='var(--muted)'; teamLabel='⬜ Unknown';
+  }
+
+  return '<div style="background:'+cardBg+';border:2px solid '+cardBorder+';border-radius:14px;overflow:hidden;margin-bottom:0;">'+
+
+    // TEAM BANNER
+    '<div style="padding:6px 14px;background:'+teamBadgeBg+';display:flex;align-items:center;justify-content:space-between;">'+
+      '<span style="font-size:11px;font-weight:800;color:'+teamBadgeCol+';text-transform:uppercase;letter-spacing:.8px;">'+teamLabel+'</span>'+
+      '<span style="font-size:10px;font-weight:700;color:'+teamBadgeCol+';">'+supLbl+'</span>'+
+    '</div>'+
+
+    // INFO
+    '<div style="padding:12px 14px 8px;">'+
+      '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'+
+        '<span style="font-family:\'JetBrains Mono\';font-size:10px;font-weight:700;color:#5a9ef7;background:rgba(45,107,228,.12);border:1px solid rgba(45,107,228,.25);border-radius:4px;padding:1px 6px;">#'+v.id+'</span>'+
+        (v.needsLift?'<span style="font-size:10px;color:var(--orange);">🚗 Needs Lift</span>':'')+
       '</div>'+
+      '<div style="font-size:18px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:3px;">'+v.name+'</div>'+
+      '<div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:6px;">'+v.address+'</div>'+
+      (ph?'<a href="tel:'+ph+'" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;">'+
+        '<span style="font-size:12px;">📞</span>'+
+        '<span style="font-family:\'JetBrains Mono\';font-size:14px;font-weight:700;color:#3a9e7a;">'+ph+'</span>'+
+      '</a>':'')+
     '</div>'+
 
-    // BOTTOM — big VOTED button
-    '<div style="padding:0 12px 12px;">'+
-      '<button onclick="agentMarkVoted('+v.id+')" style="width:100%;padding:12px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;border:2px solid '+(voted?'#22d3a0':'rgba(34,211,160,.3)')+';background:'+(voted?'#22d3a0':'rgba(34,211,160,.08)')+';color:'+(voted?'#0a0d14':'#22d3a0')+';letter-spacing:.3px;transition:all .2s;">'+
-        (voted ? '✅ VOTED — Tap to undo' : '⬜ Mark as VOTED')+
-      '</button>'+
+    // THREE ACTION BUTTONS
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:0 12px 12px;">'+
+
+      // Button 1 — Voted Ours 🌴
+      '<button onclick="agentMarkVotedAs('+v.id+',\'ours\')" style="padding:11px 4px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;'+
+        (votedOurs
+          ? 'border:2px solid #22d3a0;background:#22d3a0;color:#0a0d14;'
+          : 'border:2px solid rgba(34,211,160,.4);background:rgba(34,211,160,.08);color:#22d3a0;')+
+      '">🌴 Voted<br><span style="font-size:9px;font-weight:600;opacity:.8;">Our Panel</span></button>'+
+
+      // Button 2 — Voted Theirs 🔴
+      '<button onclick="agentMarkVotedAs('+v.id+',\'theirs\')" style="padding:11px 4px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;'+
+        (votedTheirs
+          ? 'border:2px solid #f06868;background:#f06868;color:#fff;'
+          : 'border:2px solid rgba(196,74,80,.4);background:rgba(196,74,80,.08);color:#f06868;')+
+      '">🔴 Voted<br><span style="font-size:9px;font-weight:600;opacity:.8;">Opposition</span></button>'+
+
+      // Button 3 — Voted Unknown ⬜
+      '<button onclick="agentMarkVotedAs('+v.id+',\'unknown\')" style="padding:11px 4px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;'+
+        (voted && !votedOurs && !votedTheirs
+          ? 'border:2px solid #8a96b0;background:#8a96b0;color:#0a0d14;'
+          : 'border:2px solid rgba(106,122,148,.4);background:rgba(106,122,148,.08);color:#8a96b0;')+
+      '">⬜ Voted<br><span style="font-size:9px;font-weight:600;opacity:.8;">Unknown</span></button>'+
+
     '</div>'+
+
+    // Undo row (only if voted)
+    (voted?'<div style="padding:0 12px 10px;text-align:center;">'+
+      '<button onclick="agentMarkVotedAs('+v.id+',\'undo\')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline;">↩ Undo / clear vote</button>'+
+    '</div>':'')+
+
   '</div>';
 }
 
