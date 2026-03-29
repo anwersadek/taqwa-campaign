@@ -2257,7 +2257,7 @@ const PINS = {
   viewer:'b698d86c67a2cff80405bd47af322216c552fd3a52f9c58a70f7b3a3313895b1',
   team:  '2b5d2ba5803e6fe3a2bc08b5f3965f47a92918a9c44b8090618d5d5a2876cf8c',
   agent: '888df25ae35772424a560c7152a1de794440e0ea5cfee62828333a456a506e05',
-  admin: '46635b56d3c7f0b7bb26adae2a1692debbfd145d4a0986a9137fe91e73e70360'
+  admin: '7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451'
 };
 
 async function hashPin(pin){
@@ -2358,7 +2358,9 @@ function enterPin(target){
 function pinKey(k){
   if(pinBuffer.length>=4) return;
   pinBuffer+=k; updatePinDots();
-  if(pinBuffer.length===4) setTimeout(checkPin,150);
+  // auto-submit: length 4 always, or length 1 if admin (single-digit PIN)
+  var autoLen = (pinTarget==='admin') ? 1 : 4;
+  if(pinBuffer.length===autoLen) setTimeout(checkPin,150);
 }
 function pinDel(){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); }
 function updatePinDots(){
@@ -2785,6 +2787,27 @@ function setPrFilter(el, f){
   el.classList.add('active');
   prFilter = f; prShowCount = PR_PAGE;
   prRenderCards();
+}
+
+function prUpdateProgress(){
+  var confirmed=0, rejected=0, total=DATA.length;
+  DATA.forEach(function(r){ var s=getState(r.id); if(s.status==='confirmed')confirmed++; else if(s.status==='rejected')rejected++; });
+  var pending = total - confirmed - rejected;
+  var reviewed = confirmed + rejected;
+  var pct = total>0?Math.round(reviewed/total*100):0;
+  setText('pr-confirmed', confirmed);
+  setText('pr-rejected', rejected);
+  setText('pr-pending', pending);
+  setText('pr-pct', pct+'% reviewed');
+  setStyle('pr-bar-c','width',Math.round(confirmed/total*100)+'%');
+  setStyle('pr-bar-r','width',Math.round(rejected/total*100)+'%');
+  var badge = document.getElementById('nav-badge-phones');
+  if(badge){ if(confirmed>0){badge.style.display='flex';badge.textContent=confirmed;}else badge.style.display='none'; }
+  prUpdatePushBtn();
+}
+
+function prUpdatePushBtn(){
+  // auto-sync enabled — no manual push button, nothing to update
 }
 
 function prGetFiltered(){
